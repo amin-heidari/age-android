@@ -4,8 +4,15 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+def keystorePropertiesDev = new Properties()
+keystorePropertiesDev.load(new FileInputStream(rootProject.file("keystore-dev.properties")))
+
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(rootProject.file("keystore.properties")))
+
 android {
     compileSdkVersion 28
+
     defaultConfig {
         applicationId "com.aminheidari.age"
         minSdkVersion 24
@@ -14,10 +21,39 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
+    signingConfigs {
+        dev {
+            keyAlias keystorePropertiesDev['keyAlias']
+            keyPassword keystorePropertiesDev['keyPassword']
+            storeFile file(keystorePropertiesDev['storeFile'])
+            storePassword keystorePropertiesDev['storePassword']
+        }
+        prod {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    flavorDimensions "env"
+    productFlavors {
+        dev {
+            dimension "env"
+            applicationIdSuffix ".dev"
+            signingConfig signingConfigs.dev
+        }
+        prod {
+            dimension "env"
+            signingConfig signingConfigs.prod
         }
     }
 }

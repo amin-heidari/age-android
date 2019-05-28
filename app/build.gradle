@@ -1,8 +1,9 @@
-apply plugin: 'com.android.application'
-
-apply plugin: 'kotlin-android'
-
-apply plugin: 'kotlin-android-extensions'
+plugins {
+    id("com.android.application")
+    id("kotlin-android")
+    id("kotlin-android-extensions")
+    id("com.github.triplet.play") version "2.2.1"
+}
 
 def keystorePropertiesDev = new Properties()
 keystorePropertiesDev.load(new FileInputStream(rootProject.file("keystore-dev.properties")))
@@ -56,6 +57,13 @@ android {
             signingConfig signingConfigs.prod
         }
     }
+}
+
+play {
+    serviceAccountCredentials = file("your-key.json")
+    track = "beta"
+    userFraction = 1.0
+    releaseStatus = "completed"
 }
 
 dependencies {

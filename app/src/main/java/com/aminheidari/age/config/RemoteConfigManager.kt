@@ -1,6 +1,7 @@
 package com.aminheidari.age.config
 
 import com.aminheidari.age.constants.Constants
+import com.aminheidari.age.models.AppException
 import com.aminheidari.age.models.Completion
 import com.aminheidari.age.models.Either
 import com.aminheidari.age.models.RemoteConfig
@@ -64,17 +65,36 @@ object RemoteConfigManager {
     // ====================================================================================================
 
     fun fetchConfig(completion: Completion<RemoteConfig>) {
-        apiClient.getRemoteConfig().enqueue(retrofitCallback { result ->
-            when(result) {
-                is Either.failure -> {
-
+        // Check if there's a fresh copy of the remote config cached.
+        if (cachedRemoteConfig != null && cachedRemoteConfig!!.isFresh) {
+            completion(Either.success(cachedRemoteConfig!!.remoteConfig))
+        } else {
+            // There either isn't a cache, or if there is one, it's not fresh. So try to make the api call.
+            apiClient.getRemoteConfig().enqueue(retrofitCallback { result ->
+                when(result) {
+                    is Either.failure -> {
+                        when (result.exception) {
+                            is AppException.connection -> {
+                                val cached = cachedRemoteConfig
+                                if (cached != null && !cached.isExpired) {
+                                    completion(Either.success(cached.remoteConfig))
+                                } else {
+                                    completion(Either.failure(result.exception))
+                                }
+                            }
+                            else -> {
+                                completion(Either.failure(result.exception))
+                            }
+                        }
+                    }
+                    is Either.success -> {
+                        // Update the cache.
+                        cachedRemoteConfig = CachedRemoteConfig(result.data, Calendar.getInstance().time)
+                        completion(Either.success(result.data))
+                    }
                 }
-                is Either.success -> {
-                    cachedRemoteConfig = CachedRemoteConfig(result.data, Calendar.getInstance().time)
-                    completion(Either.success(result.data))
-                }
-            }
-        })
+            })
+        }
     }
 
 

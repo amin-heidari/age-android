@@ -1,6 +1,6 @@
 package com.aminheidari.age.activities
 
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.aminheidari.age.R
 import com.aminheidari.age.config.RemoteConfigManager

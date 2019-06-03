@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        RemoteConfigManager.fetchConfig {  }
+//        RemoteConfigManager.fetchConfig {  }
     }
 
     // endregion

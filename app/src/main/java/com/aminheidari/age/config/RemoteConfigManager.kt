@@ -41,12 +41,6 @@ object RemoteConfigManager {
             get() = cachedTime < Calendar.getInstance().time.addingTimerInterval(-Constants.RemoteConfig.expireTime)
     }
 
-    sealed class ConfigException: Throwable() {
-        class connection: ConfigException()
-        class certificateExpired: ConfigException()
-        class parsing: ConfigException()
-    }
-
     interface APIClient {
         @GET(".")
         fun getRemoteConfig(): Call<RemoteConfig>

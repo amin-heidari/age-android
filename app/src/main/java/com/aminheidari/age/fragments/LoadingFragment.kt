@@ -8,21 +8,17 @@ import android.view.ViewGroup
 import com.aminheidari.age.R
 import kotlinx.android.synthetic.main.fragment_loading.*
 
-class LoadingFragment : Fragment() {
+class LoadingFragment : BaseFragment() {
 
     // ====================================================================================================
     // region Constants/Types
     // ====================================================================================================
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @return A new instance of fragment LoadingFragment.
-         */
+
         @JvmStatic
         fun newInstance() = LoadingFragment()
+
     }
 
     // endregion

@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.aminheidari.age.R
 
-class AgesFragment : Fragment() {
+class AgesFragment : BaseFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

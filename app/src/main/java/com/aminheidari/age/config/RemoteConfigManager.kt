@@ -58,13 +58,15 @@ object RemoteConfigManager {
     // region API
     // ====================================================================================================
 
-    fun fetchConfig(completion: Completion<RemoteConfig>) {
+    fun fetchConfig(completion: Completion<RemoteConfig>): Call<RemoteConfig>? {
         // Check if there's a fresh copy of the remote config cached.
         if (cachedRemoteConfig != null && cachedRemoteConfig!!.isFresh) {
             completion(Either.success(cachedRemoteConfig!!.remoteConfig))
+            return null;
         } else {
             // There either isn't a cache, or if there is one, it's not fresh. So try to make the api call.
-            apiClient.getRemoteConfig().enqueue(retrofitCallback { result ->
+            val call = apiClient.getRemoteConfig()
+            call.enqueue(retrofitCallback { result ->
                 when(result) {
                     is Either.failure -> {
                         when (result.exception) {
@@ -88,6 +90,7 @@ object RemoteConfigManager {
                     }
                 }
             })
+            return call
         }
     }
 

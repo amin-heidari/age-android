@@ -4,7 +4,11 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.aminheidari.age.R
 import com.aminheidari.age.config.RemoteConfigManager
+import com.aminheidari.age.fragments.LoadingFragment
 import com.aminheidari.age.models.RemoteConfig
+import com.aminheidari.age.utils.BackStackBehaviour
+import com.aminheidari.age.utils.TransactionAnimation
+import com.aminheidari.age.utils.showFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -15,12 +19,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-    }
 
-    override fun onResume() {
-        super.onResume()
-
-//        RemoteConfigManager.fetchConfig {  }
+        showFragment(LoadingFragment.newInstance(), BackStackBehaviour.None, TransactionAnimation.None)
     }
 
     // endregion

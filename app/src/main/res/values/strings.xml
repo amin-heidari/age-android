@@ -2,5 +2,8 @@
     <string name="app_name">Age</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="lorem_ipsum_long">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Id enim volumus, id contendimus, ut officii fructus sit ipsum officium. Ergo instituto veterum, quo etiam Stoici utuntur, hinc capiamus exordium. Unum nescio, quo modo possit, si luxuriosus sit, finitas cupiditates habere. Duo enim genera quae erant, fecit tria. Utrum igitur percurri omnem Epicuri disciplinam placet an de una voluptate quaeri, de qua omne certamen est? Hoc est dicere: Non reprehenderem asotos, si non essent asoti. Qua exposita scire cupio quae causa sit, cur Zeno ab hac antiqua constitutione desciverit, quidnam horum ab eo non sit probatum; Duo Reges: constructio interrete. Sunt enim quasi prima elementa naturae, quibus ubertas orationis adhiberi vix potest, nec equidem eam cogito consectari. Quae cum magnifice primo dici viderentur, considerata minus probabantur. An id exploratum cuiquam potest esse, quo modo se hoc habiturum sit corpus, non dico ad annum, sed ad vesperum? Utinam quidem dicerent alium alio beatiorem! Iam ruinas videres.</string>
+
+    <string name="hello_blank_fragment">Hi!</string>
+
 </resources>

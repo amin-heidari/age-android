@@ -8,27 +8,27 @@ class Logger {
 
         fun v(message: String) { }
 
-        fun v(tag: String, message: String, throwable: Throwable? = null) { }
+        fun v(tag: String?, message: String, throwable: Throwable? = null) { }
 
         fun d(message: String) { }
 
-        fun d(tag: String, message: String, throwable: Throwable? = null) { }
+        fun d(tag: String?, message: String, throwable: Throwable? = null) { }
 
         fun i(message: String) { }
 
-        fun i(tag: String, message: String, throwable: Throwable? = null) { }
+        fun i(tag: String?, message: String, throwable: Throwable? = null) { }
 
         fun w(message: String) { }
 
-        fun w(tag: String, message: String, throwable: Throwable? = null) { }
+        fun w(tag: String?, message: String, throwable: Throwable? = null) { }
 
         fun e(message: String) { }
 
-        fun e(tag: String, message: String, throwable: Throwable? = null) { }
+        fun e(tag: String?, message: String, throwable: Throwable? = null) { }
 
         fun wtf(message: String) { }
 
-        fun wtf(tag: String, message: String, throwable: Throwable? = null) { }
+        fun wtf(tag: String?, message: String, throwable: Throwable? = null) { }
 
     }
 

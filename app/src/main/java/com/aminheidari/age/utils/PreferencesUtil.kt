@@ -18,8 +18,9 @@ class PreferencesUtil {
         // ====================================================================================================
 
         private enum class Keys {
-            defaultBirthday,
-            cachedRemoteConfig
+            DefaultBirthday,
+            CachedRemoteConfig,
+            SkippedLatestVersion
         }
 
         private val sharedPreferences: SharedPreferences by lazy { App.instance.applicationContext.getSharedPreferences("com.aminheidari.age.prefs", Context.MODE_PRIVATE) }
@@ -45,7 +46,7 @@ class PreferencesUtil {
          */
         var cachedRemoteConfig: RemoteConfigManager.CachedRemoteConfig?
             get() {
-                val stringValue = sharedPreferences.getString(Keys.cachedRemoteConfig.name, null)
+                val stringValue = sharedPreferences.getString(Keys.CachedRemoteConfig.name, null)
                 return if (stringValue != null) {
                     return moshi.adapter(RemoteConfigManager.CachedRemoteConfig::class.java).fromJson(stringValue)
                 } else {
@@ -54,10 +55,22 @@ class PreferencesUtil {
             }
             set(value) {
                 if (value == null) {
-                    editor.remove(Keys.cachedRemoteConfig.name).apply()
+                    editor.remove(Keys.CachedRemoteConfig.name).apply()
                 } else {
-                    editor.putString(Keys.cachedRemoteConfig.name, moshi.adapter(RemoteConfigManager.CachedRemoteConfig::class.java).toJson(value)).apply()
+                    editor.putString(Keys.CachedRemoteConfig.name, moshi.adapter(RemoteConfigManager.CachedRemoteConfig::class.java).toJson(value)).apply()
                 }
+            }
+
+        /**
+         * The latestVersion which has been skipped at the moment.
+         * For example, user may have skipped upgrade to the latestVersion of 2.2.0 (and `2.2.0` will be persisted here),
+         * however, when the latestVersion on the store turns out to be `2.3.0`,
+         * then we'll know that we haven't presented that to the user yet.
+         */
+        var skippedLatestVersion: String?
+            get() = sharedPreferences.getString(Keys.SkippedLatestVersion.name, null)
+            set(value) {
+                editor.putString(Keys.SkippedLatestVersion.name, value)
             }
 
         // endregion

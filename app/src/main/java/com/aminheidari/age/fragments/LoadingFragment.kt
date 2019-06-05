@@ -12,10 +12,7 @@ import com.aminheidari.age.config.RemoteConfigManager
 import com.aminheidari.age.models.AppException
 import com.aminheidari.age.models.Either
 import com.aminheidari.age.models.RemoteConfig
-import com.aminheidari.age.utils.BackStackBehaviour
-import com.aminheidari.age.utils.Logger
-import com.aminheidari.age.utils.TransactionAnimation
-import com.aminheidari.age.utils.showFragment
+import com.aminheidari.age.utils.*
 import kotlinx.android.synthetic.main.fragment_loading.*
 import retrofit2.Call
 import java.util.*
@@ -113,10 +110,19 @@ class LoadingFragment : BaseFragment() {
 
                     when (result.data.version.compare(BuildConfig.VERSION_NAME)) {
                         RemoteConfig.Version.CompareResult.ForcedUpgrade -> {
-                            
+                            // The app's version is below the minimum required version.
+                            showFragment(UpgradeFragment.newInstance(), BackStackBehaviour.Wipe)
                         }
                         RemoteConfig.Version.CompareResult.OptionalUpgrade -> {
-
+                            // The app's version is below the latest version.
+                            val skippedLatestVersion = PreferencesUtil.skippedLatestVersion
+                            if (skippedLatestVersion != null && skippedLatestVersion.compareVersionTo(result.data.version.latest) >= 0) {
+                                // User has already skipped to upgrade to that version before.
+                                proceedToTheApp()
+                            } else {
+                                // User has never skipped an upgrade to this version.
+                                showFragment(UpgradeFragment.newInstance(), BackStackBehaviour.Wipe)
+                            }
                         }
                         RemoteConfig.Version.CompareResult.LatestVersion -> {
                             proceedToTheApp()

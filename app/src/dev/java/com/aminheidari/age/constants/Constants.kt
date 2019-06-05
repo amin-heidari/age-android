@@ -17,10 +17,10 @@ object Constants {
         const val apiKeyHeaderValue = "cCZA3IPS2K6R6tTzaRJrK3wVzinwogXk3A0nim8K"
 
         // Time interval (in seconds) during which the cache will be used rather than making a new api call.
-        const val freshCacheTime = 600
+        const val freshCacheTime = 1
 
         // Time interval (in seconds) after which the cache expires and a fresh remote config MUST be fetched.
-        const val expireTime = 6000
+        const val expireTime = 600
     }
 
 }

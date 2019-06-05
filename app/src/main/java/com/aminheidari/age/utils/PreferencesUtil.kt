@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.aminheidari.age.App
 import com.aminheidari.age.config.RemoteConfigManager
+import com.aminheidari.age.models.Birthday
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -40,6 +41,23 @@ class PreferencesUtil {
         // ====================================================================================================
         // region API
         // ====================================================================================================
+
+        var defaultBirthday: Birthday?
+            get() {
+                val stringValue = sharedPreferences.getString(Keys.DefaultBirthday.name, null)
+                return if (stringValue != null) {
+                    return moshi.adapter(Birthday::class.java).fromJson(stringValue)
+                } else {
+                    null
+                }
+            }
+            set(value) {
+                if (value == null) {
+                    editor.remove(Keys.DefaultBirthday.name).apply()
+                } else {
+                    editor.putString(Keys.DefaultBirthday.name, moshi.adapter(Birthday::class.java).toJson(value)).apply()
+                }
+            }
 
         /**
          * To be accessed only by the private computed property `cachedRemoteConfig`, of `RemoteConfigManager`.

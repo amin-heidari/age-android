@@ -45,7 +45,7 @@ open class BaseFragment: Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        Logger.v(this::class.java.canonicalName, String.format("%d -> onAttach.", hashCode()))
+        Logger.v(this::class.java.canonicalName, String.format("%d -> onCreate.", hashCode()))
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

@@ -14,23 +14,29 @@ fun <T>retrofitCallback(completion: Completion<T>): Callback<T> {
         override fun onFailure(call: Call<T>, t: Throwable) {
             when (t) {
                 is SSLPeerUnverifiedException -> {
-                    completion(Either.failure(AppException.certificateExpired()))
+                    completion(Either.Failure(AppException.CertificateExpired()))
                 }
                 is UnknownHostException -> {
-                    completion(Either.failure(AppException.connection()))
+                    completion(Either.Failure(AppException.Connection()))
                 }
                 else -> {
-                    completion(Either.failure(t))
+                    completion(Either.Failure(t))
                 }
             }
         }
 
         override fun onResponse(call: Call<T>, response: Response<T>) {
-            val body = response.body()
-            if (body != null) {
-                completion(Either.success(body))
+            if ((200..299).contains(response.code())) {
+                val body = response.body()
+                if (body != null) {
+                    completion(Either.Success(body))
+                } else {
+                    completion(Either.Failure(AppException.Parsing()))
+                }
+            } else if (response.code() == 403) {
+                completion(Either.Failure(AppException.Authentication()))
             } else {
-                completion(Either.failure(AppException.parsing()))
+                completion(Either.Failure(AppException.Unknown()))
             }
         }
     }

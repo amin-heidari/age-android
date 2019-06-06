@@ -102,7 +102,7 @@ class UpgradeFragment : BaseFragment() {
         if (PreferencesUtil.defaultBirthday != null) {
             showFragment(AgeFragment.newInstance(), BackStackBehaviour.Wipe)
         } else {
-            showFragment(NewAgeFragment.newInstance(), BackStackBehaviour.Wipe)
+            showFragment(AgesFragment.newInstance(), BackStackBehaviour.Wipe)
         }
     }
 

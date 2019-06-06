@@ -12,6 +12,8 @@ import com.aminheidari.age.database.DatabaseManager
 import com.aminheidari.age.database.entities.BirthdayEntity
 import com.aminheidari.age.models.Birthday
 import com.aminheidari.age.utils.ItemBinder
+import com.aminheidari.age.utils.PreferencesUtil
+import com.aminheidari.age.utils.birthday
 import kotlinx.android.synthetic.main.fragment_ages.*
 import java.lang.IllegalStateException
 
@@ -61,7 +63,15 @@ class AgesFragment : BaseFragment() {
         }
 
         override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-//            if (holder is AgeViewHolder) { holder.bind() }
+            if (holder is MyAgeViewHolder) {
+                PreferencesUtil.defaultBirthday?.let { bd ->
+                    holder.bind(bd)
+                }
+            } else if (holder is AgeViewHolder) {
+                DatabaseManager.birthdays.value?.let { birthdays ->
+                    holder.bind(birthdays[position-1].birthday)
+                }
+            }
         }
 
         override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {

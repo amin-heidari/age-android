@@ -11,6 +11,6 @@ import java.util.*
 @TypeConverters(DateConverter::class)
 data class BirthdayEntity(
     @PrimaryKey val created: Date,
-    @ColumnInfo(name = "birth_date") val birthDate: Date,
+    val birth_date: Date,
     val name: String
 )

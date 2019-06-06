@@ -7,7 +7,6 @@ import com.aminheidari.age.models.Either
 import com.aminheidari.age.models.RemoteConfig
 import com.aminheidari.age.utils.Logger
 import com.aminheidari.age.utils.PreferencesUtil
-import com.aminheidari.age.utils.PreferencesUtil.Companion.cachedRemoteConfig
 import com.aminheidari.age.utils.addingTimerInterval
 import com.aminheidari.age.utils.retrofitCallback
 import com.squareup.moshi.Moshi
@@ -16,12 +15,10 @@ import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import okhttp3.CertificatePinner
 import okhttp3.OkHttpClient
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
-import java.lang.Exception
+import retrofit2.http.Headers
 import java.util.*
 
 object RemoteConfigManager {
@@ -41,13 +38,8 @@ object RemoteConfigManager {
             get() = cachedTime < Calendar.getInstance().time.addingTimerInterval(-Constants.RemoteConfig.expireTime)
     }
 
-    sealed class ConfigException: Throwable() {
-        class connection: ConfigException()
-        class certificateExpired: ConfigException()
-        class parsing: ConfigException()
-    }
-
     interface APIClient {
+        @Headers("${Constants.RemoteConfig.apiKeyHeaderField}: ${Constants.RemoteConfig.apiKeyHeaderValue}")
         @GET(".")
         fun getRemoteConfig(): Call<RemoteConfig>
     }
@@ -64,36 +56,39 @@ object RemoteConfigManager {
     // region API
     // ====================================================================================================
 
-    fun fetchConfig(completion: Completion<RemoteConfig>) {
+    fun fetchConfig(completion: Completion<RemoteConfig>): Call<RemoteConfig>? {
         // Check if there's a fresh copy of the remote config cached.
         if (cachedRemoteConfig != null && cachedRemoteConfig!!.isFresh) {
-            completion(Either.success(cachedRemoteConfig!!.remoteConfig))
+            completion(Either.Success(cachedRemoteConfig!!.remoteConfig))
+            return null;
         } else {
             // There either isn't a cache, or if there is one, it's not fresh. So try to make the api call.
-            apiClient.getRemoteConfig().enqueue(retrofitCallback { result ->
+            val call = apiClient.getRemoteConfig()
+            call.enqueue(retrofitCallback { result ->
                 when(result) {
-                    is Either.failure -> {
+                    is Either.Failure -> {
                         when (result.exception) {
-                            is AppException.connection -> {
+                            is AppException.Connection -> {
                                 val cached = cachedRemoteConfig
                                 if (cached != null && !cached.isExpired) {
-                                    completion(Either.success(cached.remoteConfig))
+                                    completion(Either.Success(cached.remoteConfig))
                                 } else {
-                                    completion(Either.failure(result.exception))
+                                    completion(Either.Failure(result.exception))
                                 }
                             }
                             else -> {
-                                completion(Either.failure(result.exception))
+                                completion(Either.Failure(result.exception))
                             }
                         }
                     }
-                    is Either.success -> {
+                    is Either.Success -> {
                         // Update the cache.
                         cachedRemoteConfig = CachedRemoteConfig(result.data, Calendar.getInstance().time)
-                        completion(Either.success(result.data))
+                        completion(Either.Success(result.data))
                     }
                 }
             })
+            return call
         }
     }
 

@@ -8,6 +8,6 @@ import java.util.*
 fun Date.addingTimerInterval(seconds: Int): Date {
     val calendar = Calendar.getInstance()
     calendar.time = this
-    calendar.add(seconds, Calendar.SECOND)
+    calendar.add(Calendar.SECOND, seconds)
     return calendar.time
 }

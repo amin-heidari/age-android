@@ -1,7 +1,9 @@
 package com.aminheidari.age.models
 
 sealed class AppException: Throwable() {
-    class connection: AppException()
-    class certificateExpired: AppException()
-    class parsing: AppException()
+    class Connection: AppException()
+    class CertificateExpired: AppException()
+    class Authentication: AppException()
+    class Parsing: AppException()
+    class Unknown: AppException()
 }

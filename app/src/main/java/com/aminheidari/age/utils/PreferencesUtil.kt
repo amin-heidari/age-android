@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.aminheidari.age.App
 import com.aminheidari.age.config.RemoteConfigManager
+import com.aminheidari.age.models.Birthday
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -18,8 +19,9 @@ class PreferencesUtil {
         // ====================================================================================================
 
         private enum class Keys {
-            defaultBirthday,
-            cachedRemoteConfig
+            DefaultBirthday,
+            CachedRemoteConfig,
+            SkippedLatestVersion
         }
 
         private val sharedPreferences: SharedPreferences by lazy { App.instance.applicationContext.getSharedPreferences("com.aminheidari.age.prefs", Context.MODE_PRIVATE) }
@@ -40,12 +42,29 @@ class PreferencesUtil {
         // region API
         // ====================================================================================================
 
+        var defaultBirthday: Birthday?
+            get() {
+                val stringValue = sharedPreferences.getString(Keys.DefaultBirthday.name, null)
+                return if (stringValue != null) {
+                    return moshi.adapter(Birthday::class.java).fromJson(stringValue)
+                } else {
+                    null
+                }
+            }
+            set(value) {
+                if (value == null) {
+                    editor.remove(Keys.DefaultBirthday.name).apply()
+                } else {
+                    editor.putString(Keys.DefaultBirthday.name, moshi.adapter(Birthday::class.java).toJson(value)).apply()
+                }
+            }
+
         /**
          * To be accessed only by the private computed property `cachedRemoteConfig`, of `RemoteConfigManager`.
          */
         var cachedRemoteConfig: RemoteConfigManager.CachedRemoteConfig?
             get() {
-                val stringValue = sharedPreferences.getString(Keys.cachedRemoteConfig.name, null)
+                val stringValue = sharedPreferences.getString(Keys.CachedRemoteConfig.name, null)
                 return if (stringValue != null) {
                     return moshi.adapter(RemoteConfigManager.CachedRemoteConfig::class.java).fromJson(stringValue)
                 } else {
@@ -54,10 +73,22 @@ class PreferencesUtil {
             }
             set(value) {
                 if (value == null) {
-                    editor.remove(Keys.cachedRemoteConfig.name).apply()
+                    editor.remove(Keys.CachedRemoteConfig.name).apply()
                 } else {
-                    editor.putString(Keys.cachedRemoteConfig.name, moshi.adapter(RemoteConfigManager.CachedRemoteConfig::class.java).toJson(value)).apply()
+                    editor.putString(Keys.CachedRemoteConfig.name, moshi.adapter(RemoteConfigManager.CachedRemoteConfig::class.java).toJson(value)).apply()
                 }
+            }
+
+        /**
+         * The latestVersion which has been skipped at the moment.
+         * For example, user may have skipped upgrade to the latestVersion of 2.2.0 (and `2.2.0` will be persisted here),
+         * however, when the latestVersion on the store turns out to be `2.3.0`,
+         * then we'll know that we haven't presented that to the user yet.
+         */
+        var skippedLatestVersion: String?
+            get() = sharedPreferences.getString(Keys.SkippedLatestVersion.name, null)
+            set(value) {
+                editor.putString(Keys.SkippedLatestVersion.name, value)
             }
 
         // endregion

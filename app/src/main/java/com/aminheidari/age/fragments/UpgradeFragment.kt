@@ -1,7 +1,6 @@
 package com.aminheidari.age.fragments
 
 import android.content.Intent
-import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,6 +9,7 @@ import android.view.ViewGroup
 import com.aminheidari.age.BuildConfig
 import com.aminheidari.age.R
 import com.aminheidari.age.config.RemoteConfigManager
+import com.aminheidari.age.dialogs.AlertDialogFragment
 import com.aminheidari.age.models.RemoteConfig
 import com.aminheidari.age.utils.BackStackBehaviour
 import com.aminheidari.age.utils.Logger
@@ -86,13 +86,12 @@ class UpgradeFragment : BaseFragment() {
     // ====================================================================================================
 
     private val upgradeButtonOnClickListener = View.OnClickListener {
-        if (activity != null) {
+        activity?.let { activity ->
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(RemoteConfigManager.remoteConfig.storeUrl))
-            if (intent.resolveActivity(activity!!.packageManager) != null) {
+            if (intent.resolveActivity(activity.packageManager) != null) {
                 startActivity(intent)
             } else {
-                // Show an AlertDialog.
-                // https://developer.android.com/reference/android/app/AlertDialog
+                AlertDialogFragment.showNewInstance(this, R.string.error, R.string.sorry, R.string.ok)
             }
         }
     }

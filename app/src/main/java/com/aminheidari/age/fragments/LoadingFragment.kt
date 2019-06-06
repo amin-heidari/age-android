@@ -62,6 +62,12 @@ class LoadingFragment : BaseFragment() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        configCall?.cancel()
+    }
+
     // endregion
 
     // ====================================================================================================

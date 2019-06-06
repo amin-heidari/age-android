@@ -1,22 +1,22 @@
-package com.aminheidari.age.fragments
+package com.aminheidari.age.dialogs
 
 import android.content.Context
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+import android.widget.TextView
+import androidx.fragment.app.DialogFragment
+import com.aminheidari.age.R
 import com.aminheidari.age.utils.Logger
 
-abstract class BaseFragment: Fragment() {
+
+abstract class BaseDialogFragment : DialogFragment() {
 
     // ====================================================================================================
     // region Constants/Types
     // ====================================================================================================
-
-    companion object {
-        private const val TAG = "BaseFragment"
-    }
 
     // endregion
 
@@ -76,6 +76,8 @@ abstract class BaseFragment: Fragment() {
         super.onStart()
 
         Logger.v(this::class.java.canonicalName, String.format("%d -> onStart.", hashCode()))
+
+        dialog.setCanceledOnTouchOutside(allowBackgroundDismiss)
     }
 
     override fun onResume() {
@@ -120,10 +122,18 @@ abstract class BaseFragment: Fragment() {
     // region Properties
     // ====================================================================================================
 
+    open val allowBackgroundDismiss: Boolean = true
+
     // endregion
 
     // ====================================================================================================
     // region Methods
+    // ====================================================================================================
+
+    // endregion
+
+    // ====================================================================================================
+    // region Actions
     // ====================================================================================================
 
     // endregion

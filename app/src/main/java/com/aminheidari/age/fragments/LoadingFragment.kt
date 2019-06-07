@@ -141,7 +141,11 @@ class LoadingFragment : BaseFragment() {
     }
 
     private fun proceedToTheApp() {
-
+        if (PreferencesUtil.defaultBirthday != null) {
+            showFragment(AgeFragment.newInstance(), BackStackBehaviour.Wipe)
+        } else {
+            showFragment(NewAgeFragment.newInstance(NewAgeFragment.Scenario.NewDefault), BackStackBehaviour.Wipe)
+        }
     }
 
     // endregion

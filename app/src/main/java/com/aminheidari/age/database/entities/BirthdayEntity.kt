@@ -5,6 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.aminheidari.age.database.converters.DateConverter
+import java.io.Serializable
 import java.util.*
 
 @Entity
@@ -13,4 +14,4 @@ data class BirthdayEntity(
     @PrimaryKey val created: Date,
     val birth_date: Date,
     val name: String
-)
+): Serializable

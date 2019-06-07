@@ -34,7 +34,7 @@ class AgesFragment : BaseFragment() {
 
     }
 
-    internal class Adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    inner class Adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         override fun getItemCount(): Int {
             val birthdays = DatabaseManager.birthdays.value
@@ -84,7 +84,7 @@ class AgesFragment : BaseFragment() {
 
     }
 
-    internal class MyAgeViewHolder(v: View): RecyclerView.ViewHolder(v), View.OnClickListener, ItemBinder<Birthday> {
+    inner class MyAgeViewHolder(v: View): RecyclerView.ViewHolder(v), View.OnClickListener, ItemBinder<Birthday> {
 
         override fun bind(item: Birthday) { }
 
@@ -92,7 +92,7 @@ class AgesFragment : BaseFragment() {
 
     }
 
-    internal class AgeViewHolder(v: View): RecyclerView.ViewHolder(v), View.OnClickListener, ItemBinder<Birthday> {
+    inner class AgeViewHolder(v: View): RecyclerView.ViewHolder(v), View.OnClickListener, ItemBinder<Birthday> {
 
         override fun bind(item: Birthday) { }
 
@@ -100,7 +100,7 @@ class AgesFragment : BaseFragment() {
 
     }
 
-    internal class AddAgeViewHolder(v: View): RecyclerView.ViewHolder(v), View.OnClickListener {
+    inner class AddAgeViewHolder(v: View): RecyclerView.ViewHolder(v), View.OnClickListener {
 
         override fun onClick(p0: View?) { }
 

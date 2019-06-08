@@ -1,5 +1,6 @@
 package com.aminheidari.age.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Parcelable
 import android.text.Editable
@@ -11,13 +12,16 @@ import android.view.ViewGroup
 import com.aminheidari.age.R
 import com.aminheidari.age.config.RemoteConfigManager
 import com.aminheidari.age.database.entities.BirthdayEntity
+import com.aminheidari.age.dialogs.DatePickerDialogFragment
 import com.aminheidari.age.models.Birthday
 import com.aminheidari.age.utils.PreferencesUtil
 import com.aminheidari.age.utils.addingTimerInterval
 import com.aminheidari.age.utils.addingYears
 import kotlinx.android.synthetic.main.fragment_new_age.*
+import kotlinx.android.synthetic.main.fragment_new_age.view.*
 import java.io.Serializable
 import java.lang.IllegalStateException
+import java.security.SecureRandom
 import java.util.*
 
 class NewAgeFragment : BaseFragment() {
@@ -30,15 +34,35 @@ class NewAgeFragment : BaseFragment() {
 
         private const val SCENARIO = "SCENARIO"
 
+        val requestCode: Int by lazy { NewAgeFragment::class.hashCode() }
+
         @JvmStatic
-        fun newInstance(scenario: Scenario): NewAgeFragment {
+        fun newInstance(scenario: Scenario, targetFragment: BaseFragment? = null): NewAgeFragment {
             val fragment = NewAgeFragment()
+
             val args = Bundle()
             args.putSerializable(SCENARIO, scenario)
             fragment.arguments = args
+
+            targetFragment?.let { target ->
+                fragment.setTargetFragment(target, requestCode)
+            }
+
             return fragment
         }
 
+        private fun evaluateDefaultBirthDate(): BirthDate {
+            val calendar = Calendar.getInstance()
+            calendar.add(Calendar.YEAR, -RemoteConfigManager.remoteConfig.ageSpecs.defaultAge)
+            return BirthDate(
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH)
+            )
+        }
+
+        private val DatePickerDialogFragment.Result.birthDate: BirthDate
+            get() = BirthDate(year, month, day)
     }
 
     // endregion
@@ -53,6 +77,8 @@ class NewAgeFragment : BaseFragment() {
         object NewEntity: Scenario()
         data class EditEntity(val birthdayEntity: BirthdayEntity): Scenario()
     }
+
+    data class BirthDate(val year: Int, val month: Int, val day: Int): Serializable
 
     // endregion
 
@@ -74,31 +100,48 @@ class NewAgeFragment : BaseFragment() {
         when (val currentScenario = scenario) {
             is Scenario.NewDefault -> {
                 deleteButton.visibility = View.GONE
-                editingBirthDate = Calendar.getInstance().time.addingYears(-RemoteConfigManager.remoteConfig.ageSpecs.defaultAge)
+                editingBirthDate = evaluateDefaultBirthDate()
                 nameEditText.requestFocus()
             }
             is Scenario.EditDefault -> {
                 deleteButton.visibility = View.GONE
-                val birthday = PreferencesUtil.defaultBirthday!!
-                editingBirthDate = birthday.birthDate
-                nameEditText.setText(birthday.name)
+//                val birthday = PreferencesUtil.defaultBirthday!!
+//                editingBirthDate = birthday.birthDate
+//                nameEditText.setText(birthday.name)
             }
             is Scenario.NewEntity -> {
                 deleteButton.visibility = View.GONE
-                editingBirthDate = Calendar.getInstance().time.addingYears(-RemoteConfigManager.remoteConfig.ageSpecs.defaultAge)
-                nameEditText.requestFocus()
+//                editingBirthDate = Calendar.getInstance().time.addingYears(-RemoteConfigManager.remoteConfig.ageSpecs.defaultAge)
+//                nameEditText.requestFocus()
             }
             is Scenario.EditEntity -> {
                 deleteButton.visibility = View.VISIBLE
-                editingBirthDate = currentScenario.birthdayEntity.birth_date
-                nameEditText.setText(currentScenario.birthdayEntity.name)
+//                editingBirthDate = currentScenario.birthdayEntity.birth_date
+//                nameEditText.setText(currentScenario.birthdayEntity.name)
             }
         }
+
+        dateTextView.setOnClickListener(dateTextViewOnClickListener)
 
         nameEditText.addTextChangedListener(nameTextWatcher)
 
         proceedButton.setOnClickListener(proceedButtonOnClickListener)
         deleteButton.setOnClickListener(deleteButtonOnClickListener)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            DatePickerDialogFragment.requestCode -> {
+                data?.let { data ->
+                    (data.getSerializableExtra(DatePickerDialogFragment.RESULT) as? DatePickerDialogFragment.Result)?.let { result ->
+                        editingBirthDate = result.birthDate
+                    }
+                }
+            }
+            else -> Unit
+        }
     }
 
     // endregion
@@ -108,11 +151,20 @@ class NewAgeFragment : BaseFragment() {
     // ====================================================================================================
 
     private val scenario: Scenario by lazy {
-        val args = arguments ?: throw IllegalStateException("Arguments should not be null!")
-        args.getSerializable(SCENARIO) as Scenario
+        arguments!!.getSerializable(SCENARIO) as Scenario
     }
 
-    private var editingBirthDate: Date? = null
+    private var _editingBirthDate: BirthDate? = null
+    private var editingBirthDate: BirthDate?
+        get() = _editingBirthDate
+        set(value) {
+            _editingBirthDate = value
+            if (value != null) {
+                dateTextView.text = String.format("%d - %d - %d", value.year, value.month, value.day)
+            } else {
+                dateTextView.text = null
+            }
+        }
 
     // endregion
 
@@ -129,6 +181,12 @@ class NewAgeFragment : BaseFragment() {
     // ====================================================================================================
     // region Actions
     // ====================================================================================================
+
+    private val dateTextViewOnClickListener = View.OnClickListener {
+        editingBirthDate?.let { bd ->
+            DatePickerDialogFragment.showNewInstance(this, DatePickerDialogFragment.Input(bd.year, bd.month, bd.day))
+        }
+    }
 
     private val proceedButtonOnClickListener = View.OnClickListener {
         when (val currentScenario = scenario) {

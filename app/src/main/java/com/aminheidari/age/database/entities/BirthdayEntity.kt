@@ -12,6 +12,8 @@ import java.util.*
 @TypeConverters(DateConverter::class)
 data class BirthdayEntity(
     @PrimaryKey val created: Date,
-    val birth_date: Date,
+    val year: Int,
+    val month: Int,
+    val day: Int,
     val name: String
 ): Serializable

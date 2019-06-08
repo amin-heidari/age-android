@@ -1,8 +1,11 @@
 package com.aminheidari.age.dialogs
 
+import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
+import android.renderscript.ScriptGroup
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +14,7 @@ import android.widget.TextView
 import com.aminheidari.age.R
 import com.aminheidari.age.fragments.BaseFragment
 import com.aminheidari.age.fragments.NewAgeFragment
+import com.aminheidari.age.models.BirthDate
 import java.io.Serializable
 import com.aminheidari.age.utils.Logger
 
@@ -24,17 +28,18 @@ class DatePickerDialogFragment : BaseDialogFragment() {
 
         val requestCode: Int by lazy { DatePickerDialogFragment::class.hashCode() }
 
-        private const val INPUT = "INPUT"
-        const val RESULT = "RESULT"
+        private const val INITIAL_BIRTH_DATE = "INITIAL_BIRTH_DATE"
+        const val PICKED_BIRTH_DATE = "PICKED_BIRTH_DATE"
 
         @JvmStatic
         fun showNewInstance(targetFragment: BaseFragment,
-                            input: Input)
+                            initialBirthDate: BirthDate
+        )
         {
             val fragment = DatePickerDialogFragment()
 
             val args = Bundle()
-            args.putSerializable(INPUT, input)
+            args.putSerializable(INITIAL_BIRTH_DATE, initialBirthDate)
             fragment.arguments = args
 
             fragment.setTargetFragment(targetFragment, requestCode)
@@ -54,10 +59,6 @@ class DatePickerDialogFragment : BaseDialogFragment() {
     // region Constants/Types
     // ====================================================================================================
 
-    data class Input(val year: Int, val month: Int, val day: Int): Serializable
-
-    data class Result(val year: Int, val month: Int, val day: Int): Serializable
-
     // endregion
 
     // ====================================================================================================
@@ -71,7 +72,7 @@ class DatePickerDialogFragment : BaseDialogFragment() {
     // ====================================================================================================
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return DatePickerDialog(context!!, onDateSetListener, input.year, input.month, input.day)
+        return DatePickerDialog(context!!, onDateSetListener, initialBirthDate.year, initialBirthDate.month, initialBirthDate.day)
     }
 
     // endregion
@@ -83,7 +84,7 @@ class DatePickerDialogFragment : BaseDialogFragment() {
     override val allowBackgroundDismiss: Boolean
         get() = false
 
-    private val input: Input by lazy { arguments!!.getSerializable(INPUT) as Input }
+    private val initialBirthDate: BirthDate by lazy { arguments!!.getSerializable(INITIAL_BIRTH_DATE) as BirthDate }
 
     // endregion
 
@@ -98,7 +99,10 @@ class DatePickerDialogFragment : BaseDialogFragment() {
     // ====================================================================================================
 
     private val onDateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, day ->
-        Logger.d("lalala", String.format("Picked %d, %d, %d", year, month, day))
+//        Logger.d("lalala", String.format("Picked %d, %d, %d", year, month, day))
+        targetFragment?.let { target ->
+            target.onActivityResult(requestCode, Activity.RESULT_OK, Intent().apply { putExtra(PICKED_BIRTH_DATE, BirthDate(year, month, day)) })
+        }
     }
 
     // endregion

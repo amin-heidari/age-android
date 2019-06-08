@@ -13,6 +13,7 @@ import com.aminheidari.age.R
 import com.aminheidari.age.config.RemoteConfigManager
 import com.aminheidari.age.database.entities.BirthdayEntity
 import com.aminheidari.age.dialogs.DatePickerDialogFragment
+import com.aminheidari.age.models.BirthDate
 import com.aminheidari.age.models.Birthday
 import com.aminheidari.age.utils.PreferencesUtil
 import com.aminheidari.age.utils.addingTimerInterval
@@ -60,9 +61,6 @@ class NewAgeFragment : BaseFragment() {
                 calendar.get(Calendar.DAY_OF_MONTH)
             )
         }
-
-        private val DatePickerDialogFragment.Result.birthDate: BirthDate
-            get() = BirthDate(year, month, day)
     }
 
     // endregion
@@ -77,8 +75,6 @@ class NewAgeFragment : BaseFragment() {
         object NewEntity: Scenario()
         data class EditEntity(val birthdayEntity: BirthdayEntity): Scenario()
     }
-
-    data class BirthDate(val year: Int, val month: Int, val day: Int): Serializable
 
     // endregion
 
@@ -135,8 +131,8 @@ class NewAgeFragment : BaseFragment() {
         when (requestCode) {
             DatePickerDialogFragment.requestCode -> {
                 data?.let { data ->
-                    (data.getSerializableExtra(DatePickerDialogFragment.RESULT) as? DatePickerDialogFragment.Result)?.let { result ->
-                        editingBirthDate = result.birthDate
+                    (data.getSerializableExtra(DatePickerDialogFragment.PICKED_BIRTH_DATE) as? BirthDate)?.let { result ->
+                        editingBirthDate = result
                     }
                 }
             }
@@ -184,7 +180,7 @@ class NewAgeFragment : BaseFragment() {
 
     private val dateTextViewOnClickListener = View.OnClickListener {
         editingBirthDate?.let { bd ->
-            DatePickerDialogFragment.showNewInstance(this, DatePickerDialogFragment.Input(bd.year, bd.month, bd.day))
+            DatePickerDialogFragment.showNewInstance(this, bd)
         }
     }
 

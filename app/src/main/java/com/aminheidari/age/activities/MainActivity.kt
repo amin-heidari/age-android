@@ -9,6 +9,7 @@ import com.aminheidari.age.models.RemoteConfig
 import com.aminheidari.age.utils.BackStackBehaviour
 import com.aminheidari.age.utils.TransactionAnimation
 import com.aminheidari.age.utils.showFragment
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,6 +20,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        setSupportActionBar(toolbar)
+        supportActionBar?.apply {
+            setDisplayHomeAsUpEnabled(true)
+        }
 
         showFragment(LoadingFragment.newInstance(), BackStackBehaviour.None, TransactionAnimation.None)
     }

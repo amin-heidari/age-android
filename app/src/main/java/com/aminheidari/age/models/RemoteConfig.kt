@@ -15,6 +15,7 @@ data class RemoteConfig(
     ) {
 
         enum class CompareResult {
+
             LatestVersion,
             OptionalUpgrade,
             ForcedUpgrade

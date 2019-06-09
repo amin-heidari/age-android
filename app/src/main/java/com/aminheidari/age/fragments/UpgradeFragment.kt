@@ -99,6 +99,8 @@ class UpgradeFragment : BaseFragment() {
     private val skipButtonOnClickListener = View.OnClickListener {
         assert(RemoteConfigManager.remoteConfig.version.compare(BuildConfig.VERSION_NAME) != RemoteConfig.Version.CompareResult.ForcedUpgrade)
 
+        PreferencesUtil.skippedLatestVersion = RemoteConfigManager.remoteConfig.version.latest
+
         if (PreferencesUtil.defaultBirthday != null) {
             showFragment(AgeFragment.newInstance(), BackStackBehaviour.Wipe)
         } else {

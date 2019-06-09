@@ -88,7 +88,7 @@ class PreferencesUtil {
         var skippedLatestVersion: String?
             get() = sharedPreferences.getString(Keys.SkippedLatestVersion.name, null)
             set(value) {
-                editor.putString(Keys.SkippedLatestVersion.name, value)
+                editor.putString(Keys.SkippedLatestVersion.name, value).apply()
             }
 
         // endregion

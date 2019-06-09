@@ -6,6 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.aminheidari.age.R
+import com.aminheidari.age.utils.PreferencesUtil
+import kotlinx.android.synthetic.main.fragment_age.*
 
 class AgeFragment : BaseFragment() {
 
@@ -32,6 +34,14 @@ class AgeFragment : BaseFragment() {
     ): View? {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_age, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val birthday = PreferencesUtil.defaultBirthday!!
+
+        ageTextView.text = String.format("%s is: %d-%d-%d", birthday.name,  birthday.birthDate.year, birthday.birthDate.month, birthday.birthDate.day)
     }
 
     // endregion

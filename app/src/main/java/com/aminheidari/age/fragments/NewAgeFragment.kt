@@ -5,19 +5,15 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import com.aminheidari.age.R
 import com.aminheidari.age.config.RemoteConfigManager
 import com.aminheidari.age.database.entities.BirthdayEntity
 import com.aminheidari.age.dialogs.DatePickerDialogFragment
 import com.aminheidari.age.models.BirthDate
 import com.aminheidari.age.models.Birthday
-import com.aminheidari.age.utils.PreferencesUtil
-import com.aminheidari.age.utils.addingTimerInterval
-import com.aminheidari.age.utils.addingYears
+import com.aminheidari.age.utils.*
 import kotlinx.android.synthetic.main.fragment_new_age.*
 import kotlinx.android.synthetic.main.fragment_new_age.view.*
 import java.io.Serializable
@@ -93,11 +89,17 @@ class NewAgeFragment : BaseFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        nameEditText.customSelectionActionModeCallback = object: ActionMode.Callback {
+            override fun onActionItemClicked(p0: ActionMode?, p1: MenuItem?): Boolean = false
+            override fun onCreateActionMode(p0: ActionMode?, p1: Menu?): Boolean = false
+            override fun onPrepareActionMode(p0: ActionMode?, p1: Menu?): Boolean = false
+            override fun onDestroyActionMode(p0: ActionMode?) { }
+        }
+
         when (val currentScenario = scenario) {
             is Scenario.NewDefault -> {
                 deleteButton.visibility = View.GONE
                 editingBirthDate = evaluateDefaultBirthDate()
-                nameEditText.requestFocus()
             }
             is Scenario.EditDefault -> {
                 deleteButton.visibility = View.GONE
@@ -169,7 +171,7 @@ class NewAgeFragment : BaseFragment() {
     // ====================================================================================================
 
     private fun updateProceedButton() {
-        proceedButton.isEnabled = !nameEditText.text.isEmpty()
+        proceedButton.isEnabled = nameEditText.text.isNotEmpty()
     }
 
     // endregion
@@ -187,7 +189,8 @@ class NewAgeFragment : BaseFragment() {
     private val proceedButtonOnClickListener = View.OnClickListener {
         when (val currentScenario = scenario) {
             is Scenario.NewDefault -> {
-//                PreferencesUtil.defaultBirthday = Birthday(editingBirthDate)
+                PreferencesUtil.defaultBirthday = Birthday(editingBirthDate!!, nameEditText.text.toString())
+                showFragment(AgeFragment.newInstance(), BackStackBehaviour.Wipe)
             }
             is Scenario.EditDefault -> {
                 throw NotImplementedError()

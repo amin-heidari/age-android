@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.aminheidari.age.R
+import com.aminheidari.age.utils.BackStackBehaviour
 import com.aminheidari.age.utils.PreferencesUtil
+import com.aminheidari.age.utils.showFragment
 import kotlinx.android.synthetic.main.fragment_age.*
 
 class AgeFragment : BaseFragment() {
@@ -21,6 +23,18 @@ class AgeFragment : BaseFragment() {
         fun newInstance() = AgeFragment()
 
     }
+
+    // endregion
+
+    // ====================================================================================================
+    // region API
+    // ====================================================================================================
+
+    override val isShowToolbar: Boolean
+        get() = true
+
+    override val title: String?
+        get() = "Age"
 
     // endregion
 
@@ -42,6 +56,8 @@ class AgeFragment : BaseFragment() {
         val birthday = PreferencesUtil.defaultBirthday!!
 
         ageTextView.text = String.format("%s is: %d-%d-%d", birthday.name,  birthday.birthDate.year, birthday.birthDate.month, birthday.birthDate.day)
+
+        agesButton.setOnClickListener(agesButtonOnClickListener)
     }
 
     // endregion
@@ -61,6 +77,10 @@ class AgeFragment : BaseFragment() {
     // ====================================================================================================
     // region Actions
     // ====================================================================================================
+
+    private val agesButtonOnClickListener = View.OnClickListener {
+        showFragment(AgesFragment.newInstance())
+    }
 
     // endregion
 

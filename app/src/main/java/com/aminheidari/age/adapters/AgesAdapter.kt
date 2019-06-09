@@ -6,17 +6,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.aminheidari.age.R
-import com.aminheidari.age.database.DatabaseManager
 import com.aminheidari.age.database.entities.BirthdayEntity
-import com.aminheidari.age.fragments.AgesFragment
 import com.aminheidari.age.models.Birthday
 import com.aminheidari.age.utils.ItemBinder
-import com.aminheidari.age.utils.OnItemSelectListener
-import com.aminheidari.age.utils.PreferencesUtil
-import com.aminheidari.age.utils.birthday
+import com.aminheidari.age.utils.OnItemSelectedListener
 import kotlin.properties.Delegates
 
-class AgesAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     // ====================================================================================================
     // region Constants/Types
@@ -43,26 +39,42 @@ class AgesAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
     }
 
-    inner class MyAgeViewHolder(v: View): RecyclerView.ViewHolder(v), View.OnClickListener, ItemBinder<Birthday> {
+    inner class MyAgeViewHolder(view: View): RecyclerView.ViewHolder(view), View.OnClickListener, ItemBinder<Birthday> {
+
+        init {
+            view.setOnClickListener(this)
+        }
 
         override fun bind(item: Birthday) { }
 
-        override fun onClick(p0: View?) { }
+        override fun onClick(view: View?) {
+            onItemSelectedListener.onItemSelected(items[adapterPosition])
+        }
 
     }
 
-    inner class AgeViewHolder(v: View): RecyclerView.ViewHolder(v), View.OnClickListener, ItemBinder<BirthdayEntity> {
+    inner class AgeViewHolder(view: View): RecyclerView.ViewHolder(view), View.OnClickListener, ItemBinder<BirthdayEntity> {
+
+        init {
+            view.setOnClickListener(this)
+        }
 
         override fun bind(item: BirthdayEntity) { }
 
-        override fun onClick(p0: View?) { }
+        override fun onClick(view: View?) {
+            onItemSelectedListener.onItemSelected(items[adapterPosition])
+        }
 
     }
 
-    inner class AddAgeViewHolder(v: View): RecyclerView.ViewHolder(v), View.OnClickListener {
+    inner class AddAgeViewHolder(view: View): RecyclerView.ViewHolder(view), View.OnClickListener {
 
-        override fun onClick(p0: View?) {
-            listener?.onSelected(Item.AddAge)
+        init {
+            view.setOnClickListener(this)
+        }
+
+        override fun onClick(view: View?) {
+            onItemSelectedListener.onItemSelected(items[adapterPosition])
         }
 
     }
@@ -116,8 +128,6 @@ class AgesAdapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     // ====================================================================================================
     // region API
     // ====================================================================================================
-
-    var listener: OnItemSelectListener<Item>? = null
 
     var items: List<Item> by Delegates.observable(emptyList()) { _, oldValue, newValue ->
         DiffUtil.calculateDiff(ItemsDiffCallback(oldValue, newValue)).dispatchUpdatesTo(this)

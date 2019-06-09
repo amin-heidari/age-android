@@ -72,6 +72,13 @@ class NewAgeFragment : BaseFragment() {
         data class EditEntity(val birthdayEntity: BirthdayEntity): Scenario()
     }
 
+    sealed class Result: Serializable {
+        // When the default age is modified (Note that adding the new age happens only once so no reason to have a `Result` case for it).
+        object UpdatedDefault: Result()
+        // Covers the addition/removal/edit of the other ages.
+        object ModifiedEntities: Result()
+    }
+
     // endregion
 
     // ====================================================================================================

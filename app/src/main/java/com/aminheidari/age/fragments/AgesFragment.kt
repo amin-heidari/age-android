@@ -1,5 +1,6 @@
 package com.aminheidari.age.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -8,16 +9,16 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.aminheidari.age.R
+import com.aminheidari.age.activities.NewAgeActivity
+import com.aminheidari.age.adapters.AgesAdapter
 import com.aminheidari.age.database.DatabaseManager
 import com.aminheidari.age.database.entities.BirthdayEntity
 import com.aminheidari.age.models.Birthday
-import com.aminheidari.age.utils.ItemBinder
-import com.aminheidari.age.utils.PreferencesUtil
-import com.aminheidari.age.utils.birthday
+import com.aminheidari.age.utils.*
 import kotlinx.android.synthetic.main.fragment_ages.*
 import java.lang.IllegalStateException
 
-class AgesFragment : BaseFragment() {
+class AgesFragment : BaseFragment(), OnItemSelectedListener<AgesAdapter.Item> {
 
     // ====================================================================================================
     // region Constants/Types
@@ -134,7 +135,7 @@ class AgesFragment : BaseFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         recyclerView.layoutManager = LinearLayoutManager(view.context)
-        recyclerView.adapter = Adapter()
+        recyclerView.adapter = AgesAdapter(this)
 
         DatabaseManager.birthdays.observe(this, birthdaysObserver)
     }
@@ -143,6 +144,12 @@ class AgesFragment : BaseFragment() {
         super.onDestroyView()
 
         DatabaseManager.birthdays.removeObservers(this)
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        (recyclerView.adapter as? AgesAdapter)?.items = listOf(AgesAdapter.Item.AddAge)
     }
 
     // endregion
@@ -166,6 +173,30 @@ class AgesFragment : BaseFragment() {
     // ====================================================================================================
     // region Actions
     // ====================================================================================================
+
+    // endregion
+
+    // ====================================================================================================
+    // region OnItemSelectedListener<AgesAdapter.Item>
+    // ====================================================================================================
+
+    override fun onItemSelected(item: AgesAdapter.Item) {
+        when(item) {
+            is AgesAdapter.Item.MyAge -> {
+                // Show the activity instead.
+//                showFragment(NewAgeFragment.newInstance(NewAgeFragment.Scenario.EditDefault), )
+
+            }
+            is AgesAdapter.Item.Age -> {
+
+            }
+            is AgesAdapter.Item.AddAge -> {
+                context?.let { context ->
+                    startActivity(Intent(context, NewAgeActivity::class.java))
+                }
+            }
+        }
+    }
 
     // endregion
 

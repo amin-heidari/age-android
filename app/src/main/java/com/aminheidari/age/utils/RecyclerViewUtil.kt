@@ -4,6 +4,6 @@ interface ItemBinder<T> {
     fun bind(item: T)
 }
 
-interface OnItemSelectListener<T> {
-    fun onSelected(item: T)
+interface OnItemSelectedListener<T> {
+    fun onItemSelected(item: T)
 }

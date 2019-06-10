@@ -179,10 +179,10 @@ class AgesFragment : BaseFragment(), OnItemSelectedListener<AgesAdapter.Item> {
                 showFragment(NewAgeFragment.newInstance(NewAgeFragment.Scenario.EditDefault), BackStackBehaviour.Add, TransactionAnimation.PresentBottom)
             }
             is AgesAdapter.Item.Age -> {
-
+                showFragment(NewAgeFragment.newInstance(NewAgeFragment.Scenario.EditEntity(item.birthdayEntity)), BackStackBehaviour.Add, TransactionAnimation.PresentBottom)
             }
             is AgesAdapter.Item.AddAge -> {
-                //
+                showFragment(NewAgeFragment.newInstance(NewAgeFragment.Scenario.NewEntity), BackStackBehaviour.Add, TransactionAnimation.PresentBottom)
             }
         }
     }

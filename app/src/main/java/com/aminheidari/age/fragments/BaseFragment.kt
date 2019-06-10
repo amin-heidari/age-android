@@ -15,7 +15,7 @@ abstract class BaseFragment: Fragment() {
     // ====================================================================================================
 
     companion object {
-        private const val TAG = "BaseFragment"
+        const val RESULT = "RESULT"
     }
 
     // endregion

@@ -1,12 +1,11 @@
 package com.aminheidari.age.fragments
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.Parcelable
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
-import androidx.fragment.app.Fragment
 import com.aminheidari.age.R
 import com.aminheidari.age.config.RemoteConfigManager
 import com.aminheidari.age.database.entities.BirthdayEntity
@@ -15,10 +14,7 @@ import com.aminheidari.age.models.BirthDate
 import com.aminheidari.age.models.Birthday
 import com.aminheidari.age.utils.*
 import kotlinx.android.synthetic.main.fragment_new_age.*
-import kotlinx.android.synthetic.main.fragment_new_age.view.*
 import java.io.Serializable
-import java.lang.IllegalStateException
-import java.security.SecureRandom
 import java.util.*
 
 class NewAgeFragment : BaseFragment() {
@@ -31,7 +27,7 @@ class NewAgeFragment : BaseFragment() {
 
         private const val SCENARIO = "SCENARIO"
 
-        val requestCode: Int by lazy { NewAgeFragment::class.hashCode() }
+        val REQUEST_CODE: Int by lazy { NewAgeFragment::class.hashCode() }
 
         @JvmStatic
         fun newInstance(scenario: Scenario, targetFragment: BaseFragment? = null): NewAgeFragment {
@@ -42,7 +38,7 @@ class NewAgeFragment : BaseFragment() {
             fragment.arguments = args
 
             targetFragment?.let { target ->
-                fragment.setTargetFragment(target, requestCode)
+                fragment.setTargetFragment(target, REQUEST_CODE)
             }
 
             return fragment
@@ -181,6 +177,16 @@ class NewAgeFragment : BaseFragment() {
         proceedButton.isEnabled = nameEditText.text.isNotEmpty()
     }
 
+    private fun finishWithResult(result: Result) {
+        targetFragment?.onActivityResult(
+            REQUEST_CODE,
+            Activity.RESULT_OK,
+            Intent().apply {
+                putExtra(RESULT, result)
+            })
+        popBackstack()
+    }
+
     // endregion
 
     // ====================================================================================================
@@ -194,25 +200,29 @@ class NewAgeFragment : BaseFragment() {
     }
 
     private val proceedButtonOnClickListener = View.OnClickListener {
-        when (val currentScenario = scenario) {
+        when (scenario) {
             is Scenario.NewDefault -> {
                 PreferencesUtil.defaultBirthday = Birthday(editingBirthDate!!, nameEditText.text.toString())
+
                 showFragment(AgeFragment.newInstance(), BackStackBehaviour.Wipe)
             }
             is Scenario.EditDefault -> {
-                throw NotImplementedError()
+                PreferencesUtil.defaultBirthday = Birthday(editingBirthDate!!, nameEditText.text.toString())
+
+                finishWithResult(Result.UpdatedDefault)
             }
-            is Scenario.NewEntity -> {
-                throw NotImplementedError()
-            }
-            is Scenario.EditEntity -> {
-                throw NotImplementedError()
+            is Scenario.NewEntity, is Scenario.EditEntity -> {
+                // TODO: Make the db update.
+
+                finishWithResult(Result.ModifiedEntities)
             }
         }
     }
 
     private val deleteButtonOnClickListener = View.OnClickListener {
+        // TODO: Make the db update.
 
+        finishWithResult(Result.ModifiedEntities)
     }
 
     private val nameTextWatcher = object: TextWatcher {

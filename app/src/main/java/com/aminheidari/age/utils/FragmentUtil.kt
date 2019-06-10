@@ -9,3 +9,7 @@ fun Fragment.showFragment(
 ) {
     activity?.showFragment(fragment, backStackBehaviour, transactionAnimation)
 }
+
+fun Fragment.popBackstack() {
+    activity?.popBackStack()
+}

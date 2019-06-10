@@ -11,10 +11,7 @@ import com.aminheidari.age.R
 import com.aminheidari.age.config.RemoteConfigManager
 import com.aminheidari.age.dialogs.AlertDialogFragment
 import com.aminheidari.age.models.RemoteConfig
-import com.aminheidari.age.utils.BackStackBehaviour
-import com.aminheidari.age.utils.Logger
-import com.aminheidari.age.utils.PreferencesUtil
-import com.aminheidari.age.utils.showFragment
+import com.aminheidari.age.utils.*
 import kotlinx.android.synthetic.main.fragment_upgrade.*
 
 class UpgradeFragment : BaseFragment() {
@@ -104,7 +101,7 @@ class UpgradeFragment : BaseFragment() {
         if (PreferencesUtil.defaultBirthday != null) {
             showFragment(AgeFragment.newInstance(), BackStackBehaviour.Wipe)
         } else {
-            showFragment(NewAgeFragment.newInstance(NewAgeFragment.Scenario.NewDefault), BackStackBehaviour.Wipe)
+            showFragment(NewAgeFragment.newInstance(NewAgeFragment.Scenario.NewDefault), BackStackBehaviour.Wipe, TransactionAnimation.PresentBottom)
         }
     }
 

@@ -30,12 +30,6 @@ class AgeFragment : BaseFragment() {
     // region API
     // ====================================================================================================
 
-    override val isShowToolbar: Boolean
-        get() = true
-
-    override val title: String?
-        get() = "Age"
-
     // endregion
 
     // ====================================================================================================

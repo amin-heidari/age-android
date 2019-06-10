@@ -144,7 +144,7 @@ class LoadingFragment : BaseFragment() {
         if (PreferencesUtil.defaultBirthday != null) {
             showFragment(AgeFragment.newInstance(), BackStackBehaviour.Wipe)
         } else {
-            showFragment(NewAgeFragment.newInstance(NewAgeFragment.Scenario.NewDefault), BackStackBehaviour.Wipe)
+            showFragment(NewAgeFragment.newInstance(NewAgeFragment.Scenario.NewDefault), BackStackBehaviour.Wipe, TransactionAnimation.PresentBottom)
         }
     }
 

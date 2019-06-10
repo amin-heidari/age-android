@@ -9,7 +9,6 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.aminheidari.age.R
-import com.aminheidari.age.activities.NewAgeActivity
 import com.aminheidari.age.adapters.AgesAdapter
 import com.aminheidari.age.database.DatabaseManager
 import com.aminheidari.age.database.entities.BirthdayEntity
@@ -113,12 +112,6 @@ class AgesFragment : BaseFragment(), OnItemSelectedListener<AgesAdapter.Item> {
     // region API
     // ====================================================================================================
 
-    override val isShowToolbar: Boolean
-        get() = true
-
-    override val title: String?
-        get() = "Ages"
-
     // ====================================================================================================
     // region Life Cycle
     // ====================================================================================================
@@ -183,17 +176,13 @@ class AgesFragment : BaseFragment(), OnItemSelectedListener<AgesAdapter.Item> {
     override fun onItemSelected(item: AgesAdapter.Item) {
         when(item) {
             is AgesAdapter.Item.MyAge -> {
-                // Show the activity instead.
-//                showFragment(NewAgeFragment.newInstance(NewAgeFragment.Scenario.EditDefault), )
-
+                showFragment(NewAgeFragment.newInstance(NewAgeFragment.Scenario.EditDefault), BackStackBehaviour.Add, TransactionAnimation.PresentBottom)
             }
             is AgesAdapter.Item.Age -> {
 
             }
             is AgesAdapter.Item.AddAge -> {
-                context?.let { context ->
-                    startActivity(Intent(context, NewAgeActivity::class.java))
-                }
+                //
             }
         }
     }

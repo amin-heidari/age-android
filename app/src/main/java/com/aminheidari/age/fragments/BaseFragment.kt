@@ -30,9 +30,6 @@ abstract class BaseFragment: Fragment() {
     // region API
     // ====================================================================================================
 
-    open val isShowToolbar: Boolean = false
-    open val title: String? = null
-
     // endregion
 
     // ====================================================================================================

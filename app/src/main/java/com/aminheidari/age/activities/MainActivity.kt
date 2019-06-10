@@ -10,7 +10,7 @@ import com.aminheidari.age.fragments.LoadingFragment
 import com.aminheidari.age.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), OnFragmentsStackChangedListener {
+class MainActivity : AppCompatActivity() {
 
     // ====================================================================================================
     // region Static
@@ -38,26 +38,7 @@ class MainActivity : AppCompatActivity(), OnFragmentsStackChangedListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        supportFragmentManager.addOnBackStackChangedListener {
-            adjustToolbar()
-        }
-
-        setSupportActionBar(toolbar)
-        adjustToolbar()
-
         showFragment(LoadingFragment.newInstance(), BackStackBehaviour.None, TransactionAnimation.None)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        return when (item?.itemId) {
-            android.R.id.home -> {
-                if (supportFragmentManager.backStackEntryCount > 0) {
-                    popBackStack()
-                }
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
     }
 
     // endregion
@@ -75,15 +56,6 @@ class MainActivity : AppCompatActivity(), OnFragmentsStackChangedListener {
     // region Methods
     // ====================================================================================================
 
-    private fun adjustToolbar() {
-        toolbar.visibility = if (topBaseFragment?.isShowToolbar == true) View.VISIBLE else View.GONE
-
-        supportActionBar?.apply {
-            setDisplayHomeAsUpEnabled(supportFragmentManager.backStackEntryCount > 0)
-            title = topBaseFragment?.title
-        }
-    }
-
     // endregion
 
     // ====================================================================================================
@@ -95,10 +67,6 @@ class MainActivity : AppCompatActivity(), OnFragmentsStackChangedListener {
     // ====================================================================================================
     // region OnFragmentsStackChangedListener
     // ====================================================================================================
-
-    override fun onFragmentsStackChanged() {
-        adjustToolbar()
-    }
 
     // endregion
 

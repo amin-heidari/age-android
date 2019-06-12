@@ -92,14 +92,17 @@ class AlertDialogFragment : BaseDialogFragment() {
 
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        dialog.setCanceledOnTouchOutside(false)
+    }
+
     // endregion
 
     // ====================================================================================================
     // region Properties
     // ====================================================================================================
-
-    override val allowBackgroundDismiss: Boolean
-        get() = false
 
     // endregion
 

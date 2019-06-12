@@ -17,6 +17,7 @@ import com.aminheidari.age.utils.*
 import kotlinx.android.synthetic.main.fragment_new_age.*
 import java.io.Serializable
 import java.util.*
+import kotlin.properties.Delegates
 
 class NewAgeFragment : BaseFragment() {
 
@@ -28,7 +29,7 @@ class NewAgeFragment : BaseFragment() {
 
         private const val SCENARIO = "SCENARIO"
 
-        val REQUEST_CODE: Int by lazy { NewAgeFragment::class.hashCode() }
+        const val REQUEST_CODE: Int = 10
 
         @JvmStatic
         fun newInstance(scenario: Scenario, targetFragment: BaseFragment? = null): NewAgeFragment {
@@ -107,19 +108,18 @@ class NewAgeFragment : BaseFragment() {
             }
             is Scenario.EditDefault -> {
                 deleteButton.visibility = View.GONE
-//                val birthday = PreferencesUtil.defaultBirthday!!
-//                editingBirthDate = birthday.birthDate
-//                nameEditText.setText(birthday.name)
+                val birthday = PreferencesUtil.defaultBirthday!!
+                editingBirthDate = birthday.birthDate
+                nameEditText.setText(birthday.name)
             }
             is Scenario.NewEntity -> {
                 deleteButton.visibility = View.GONE
-//                editingBirthDate = Calendar.getInstance().time.addingYears(-RemoteConfigManager.remoteConfig.ageSpecs.defaultAge)
-//                nameEditText.requestFocus()
+                editingBirthDate = evaluateDefaultBirthDate()
             }
             is Scenario.EditEntity -> {
                 deleteButton.visibility = View.VISIBLE
-//                editingBirthDate = currentScenario.birthdayEntity.birth_date
-//                nameEditText.setText(currentScenario.birthdayEntity.name)
+                editingBirthDate = currentScenario.birthdayEntity.birthday.birthDate
+                nameEditText.setText(currentScenario.birthdayEntity.name)
             }
         }
 
@@ -168,11 +168,31 @@ class NewAgeFragment : BaseFragment() {
             }
         }
 
+    private var isProcessing: Boolean by Delegates.observable(false) { _, _, newValue ->
+        if (newValue) {
+            nameEditText.isEnabled = false
+            dateTextView.isEnabled = false
+            proceedButton.isEnabled = false
+            deleteButton.isEnabled = false
+            progressBar.visibility = View.VISIBLE
+        } else {
+            nameEditText.isEnabled = true
+            dateTextView.isEnabled = true
+            proceedButton.isEnabled = true
+            deleteButton.isEnabled = true
+            progressBar.visibility = View.GONE
+        }
+    }
+
     // endregion
 
     // ====================================================================================================
     // region Methods
     // ====================================================================================================
+
+    override fun handleBackPressed(listener: OnNavigateAwayListener): Boolean {
+        return isProcessing
+    }
 
     private fun updateProceedButton() {
         proceedButton.isEnabled = nameEditText.text.isNotEmpty()
@@ -201,25 +221,28 @@ class NewAgeFragment : BaseFragment() {
     }
 
     private val proceedButtonOnClickListener = View.OnClickListener {
+        val birthday = Birthday(editingBirthDate!!, nameEditText.text.toString())
+
         when (val currentScenario = scenario) {
             is Scenario.NewDefault -> {
-                PreferencesUtil.defaultBirthday = Birthday(editingBirthDate!!, nameEditText.text.toString())
+                PreferencesUtil.defaultBirthday = birthday
 
                 showFragment(AgeFragment.newInstance(), BackStackBehaviour.Wipe)
             }
             is Scenario.EditDefault -> {
-                PreferencesUtil.defaultBirthday = Birthday(editingBirthDate!!, nameEditText.text.toString())
+                PreferencesUtil.defaultBirthday = birthday
 
                 finishWithResult(Result.UpdatedDefault)
             }
             is Scenario.NewEntity -> {
-                // TODO: Make the db update.
-
-                finishWithResult(Result.ModifiedEntities)
+                isProcessing = true
+                DatabaseManager.addBirthday(birthday) {
+                    finishWithResult(Result.ModifiedEntities)
+                }
             }
             is Scenario.EditEntity -> {
-                // TODO: Show loading state on UI.
-                DatabaseManager.deleteBirthday(currentScenario.birthdayEntity) {
+                isProcessing = true
+                DatabaseManager.updateBirthday(currentScenario.birthdayEntity, birthday) {
                     finishWithResult(Result.ModifiedEntities)
                 }
             }
@@ -227,9 +250,12 @@ class NewAgeFragment : BaseFragment() {
     }
 
     private val deleteButtonOnClickListener = View.OnClickListener {
-        // TODO: Make the db update.
-
-        finishWithResult(Result.ModifiedEntities)
+        (scenario as? Scenario.EditEntity)?.let { editEntityScenario ->
+            isProcessing = true
+            DatabaseManager.deleteBirthday(editEntityScenario.birthdayEntity) {
+                finishWithResult(Result.ModifiedEntities)
+            }
+        }
     }
 
     private val nameTextWatcher = object: TextWatcher {

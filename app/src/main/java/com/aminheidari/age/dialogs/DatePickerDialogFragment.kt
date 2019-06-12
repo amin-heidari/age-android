@@ -34,8 +34,7 @@ class DatePickerDialogFragment : BaseDialogFragment() {
         @JvmStatic
         fun showNewInstance(targetFragment: BaseFragment,
                             initialBirthDate: BirthDate
-        )
-        {
+        ) {
             val fragment = DatePickerDialogFragment()
 
             val args = Bundle()
@@ -46,7 +45,7 @@ class DatePickerDialogFragment : BaseDialogFragment() {
 
             // If the back button needs to be blocked.
             // https://stackoverflow.com/a/10171885
-            fragment.isCancelable = true
+            fragment.isCancelable = false
 
             targetFragment.activity?.let { fragment.show(it.supportFragmentManager, AlertDialogFragment::class.java.canonicalName) }
         }
@@ -75,14 +74,17 @@ class DatePickerDialogFragment : BaseDialogFragment() {
         return DatePickerDialog(context!!, onDateSetListener, initialBirthDate.year, initialBirthDate.month, initialBirthDate.day)
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        dialog.setCanceledOnTouchOutside(false)
+    }
+
     // endregion
 
     // ====================================================================================================
     // region Properties
     // ====================================================================================================
-
-    override val allowBackgroundDismiss: Boolean
-        get() = false
 
     private val initialBirthDate: BirthDate by lazy { arguments!!.getSerializable(INITIAL_BIRTH_DATE) as BirthDate }
 

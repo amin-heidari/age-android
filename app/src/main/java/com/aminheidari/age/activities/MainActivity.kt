@@ -41,6 +41,29 @@ class MainActivity : AppCompatActivity() {
         showFragment(LoadingFragment.newInstance(), BackStackBehaviour.None, TransactionAnimation.None)
     }
 
+    override fun onBackPressed() {
+        super.onBackPressed()
+
+        val top = topBaseFragment
+
+        val proceed = { super.onBackPressed() }
+
+        if (top == null) {
+            proceed()
+        } else {
+            val handled = top.handleBackPressed(object: BaseFragment.OnNavigateAwayListener {
+                override fun onNavigateAway(proceed: Boolean) {
+                    if (proceed) {
+                        proceed()
+                    }
+                }
+            })
+            if (!handled) {
+                proceed()
+            }
+        }
+    }
+
     // endregion
 
     // ====================================================================================================

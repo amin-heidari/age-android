@@ -76,8 +76,6 @@ abstract class BaseDialogFragment : DialogFragment() {
         super.onStart()
 
         Logger.v(this::class.java.canonicalName, String.format("%d -> onStart.", hashCode()))
-
-        dialog.setCanceledOnTouchOutside(allowBackgroundDismiss)
     }
 
     override fun onResume() {
@@ -121,8 +119,6 @@ abstract class BaseDialogFragment : DialogFragment() {
     // ====================================================================================================
     // region Properties
     // ====================================================================================================
-
-    open val allowBackgroundDismiss: Boolean = true
 
     // endregion
 

@@ -14,8 +14,8 @@ abstract class BaseFragment: Fragment() {
     // region Constants/Types
     // ====================================================================================================
 
-    companion object {
-        const val RESULT = "RESULT"
+    interface OnNavigateAwayListener {
+        fun onNavigateAway(proceed: Boolean)
     }
 
     // endregion
@@ -23,6 +23,10 @@ abstract class BaseFragment: Fragment() {
     // ====================================================================================================
     // region Static
     // ====================================================================================================
+
+    companion object {
+        const val RESULT = "RESULT"
+    }
 
     // endregion
 
@@ -125,6 +129,10 @@ abstract class BaseFragment: Fragment() {
     // ====================================================================================================
     // region Methods
     // ====================================================================================================
+
+    open fun handleBackPressed(listener: OnNavigateAwayListener): Boolean {
+        return false
+    }
 
     // endregion
 

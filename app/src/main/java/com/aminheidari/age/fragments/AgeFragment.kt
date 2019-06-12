@@ -73,7 +73,7 @@ class AgeFragment : BaseFragment() {
     // ====================================================================================================
 
     private val agesButtonOnClickListener = View.OnClickListener {
-        showFragment(AgesFragment.newInstance())
+        showFragment(AgesFragment.newInstance(), BackStackBehaviour.Add)
     }
 
     // endregion

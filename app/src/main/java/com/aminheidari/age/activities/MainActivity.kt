@@ -42,8 +42,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
-
         val top = topBaseFragment
 
         val proceed = { super.onBackPressed() }

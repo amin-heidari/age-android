@@ -34,78 +34,6 @@ class AgesFragment : BaseFragment(), OnItemSelectedListener<AgesAdapter.Item> {
 
     }
 
-    inner class Adapter: RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
-        override fun getItemCount(): Int {
-            val birthdays = DatabaseManager.birthdays.value
-            return if (birthdays == null) {
-                2
-            } else {
-                birthdays.size + 2
-            }
-        }
-
-        override fun getItemViewType(position: Int): Int {
-            return when {
-                position == 0 -> ITEM_MY_AGE
-                position < itemCount-1 -> ITEM_AGE
-                else -> ITEM_ADD_AGE
-            }
-        }
-
-        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-            return when (viewType) {
-                ITEM_MY_AGE -> MyAgeViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_age, parent, false))
-                ITEM_AGE -> AgeViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_age, parent, false))
-                ITEM_ADD_AGE -> AddAgeViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_add_age, parent, false))
-                else -> { throw IllegalStateException("viewType not supported!") }
-            }
-        }
-
-        override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-            if (holder is MyAgeViewHolder) {
-                PreferencesUtil.defaultBirthday?.let { bd ->
-                    holder.bind(bd)
-                }
-            } else if (holder is AgeViewHolder) {
-                DatabaseManager.birthdays.value?.let { birthdays ->
-                    holder.bind(birthdays[position-1].birthday)
-                }
-            }
-        }
-
-        override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
-            super.onViewAttachedToWindow(holder)
-        }
-
-        override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
-            super.onViewDetachedFromWindow(holder)
-        }
-
-    }
-
-    inner class MyAgeViewHolder(v: View): RecyclerView.ViewHolder(v), View.OnClickListener, ItemBinder<Birthday> {
-
-        override fun bind(item: Birthday) { }
-
-        override fun onClick(p0: View?) { }
-
-    }
-
-    inner class AgeViewHolder(v: View): RecyclerView.ViewHolder(v), View.OnClickListener, ItemBinder<Birthday> {
-
-        override fun bind(item: Birthday) { }
-
-        override fun onClick(p0: View?) { }
-
-    }
-
-    inner class AddAgeViewHolder(v: View): RecyclerView.ViewHolder(v), View.OnClickListener {
-
-        override fun onClick(p0: View?) { }
-
-    }
-
     // endregion
 
     // ====================================================================================================
@@ -142,7 +70,33 @@ class AgesFragment : BaseFragment(), OnItemSelectedListener<AgesAdapter.Item> {
     override fun onStart() {
         super.onStart()
 
-        (recyclerView.adapter as? AgesAdapter)?.items = listOf(AgesAdapter.Item.AddAge)
+        (recyclerView.adapter as? AgesAdapter)?.items = adapterItems
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            NewAgeFragment.REQUEST_CODE -> {
+                (data?.getSerializableExtra(RESULT) as? NewAgeFragment.Result)?.let { result ->
+                    // Of course I could have created yet another live data for the default birthday,
+                    // with a fancy mediator live data to combine that with the entities.
+                    // But not worth my time.
+                    // Besides, I'm sure the SharedPreferences is pretty efficient in not doing IO when
+                    // the value has not changed so we shouldn't miss even a single screen refresh cycle.
+
+                    // It's all fancy and amazing that you have created this, but cannot make UI update here (See issue AGE-42),
+                    // and can only update properties and values.
+
+                    when (result) {
+                        is NewAgeFragment.Result.UpdatedDefault -> {
+                            refreshAdapterItems()
+                        }
+                        else -> Unit // Because we'll get a hit on `birthdaysObserver` below.
+                    }
+                }
+            }
+        }
     }
 
     // endregion
@@ -152,14 +106,37 @@ class AgesFragment : BaseFragment(), OnItemSelectedListener<AgesAdapter.Item> {
     // ====================================================================================================
 
     private val birthdaysObserver = Observer<List<BirthdayEntity>> { birthdays ->
-        recyclerView.adapter?.notifyDataSetChanged()
+        refreshAdapterItems()
     }
+
+    private var adapterItems: List<AgesAdapter.Item> = listOf(AgesAdapter.Item.AddAge)
 
     // endregion
 
     // ====================================================================================================
     // region Methods
     // ====================================================================================================
+
+    private fun refreshAdapterItems() {
+        adapterItems = evaluateAdapterItems()
+
+        // This is to make sure there is no race condition between `birthdaysObserver` and `onStart`.
+        if (isVisible) {
+            (recyclerView.adapter as? AgesAdapter)?.items = adapterItems
+        }
+    }
+
+    private fun evaluateAdapterItems(): List<AgesAdapter.Item> {
+        val list = mutableListOf<AgesAdapter.Item>(AgesAdapter.Item.MyAge(PreferencesUtil.defaultBirthday!!))
+
+        DatabaseManager.birthdays.value?.let { birthdays ->
+            list.addAll(birthdays.map { AgesAdapter.Item.Age(it) })
+        }
+
+        list.add(AgesAdapter.Item.AddAge)
+
+        return list
+    }
 
     // endregion
 
@@ -176,13 +153,13 @@ class AgesFragment : BaseFragment(), OnItemSelectedListener<AgesAdapter.Item> {
     override fun onItemSelected(item: AgesAdapter.Item) {
         when(item) {
             is AgesAdapter.Item.MyAge -> {
-                showFragment(NewAgeFragment.newInstance(NewAgeFragment.Scenario.EditDefault), BackStackBehaviour.Add, TransactionAnimation.PresentBottom)
+                showFragment(NewAgeFragment.newInstance(NewAgeFragment.Scenario.EditDefault, this), BackStackBehaviour.Add, TransactionAnimation.PresentBottom)
             }
             is AgesAdapter.Item.Age -> {
-                showFragment(NewAgeFragment.newInstance(NewAgeFragment.Scenario.EditEntity(item.birthdayEntity)), BackStackBehaviour.Add, TransactionAnimation.PresentBottom)
+                showFragment(NewAgeFragment.newInstance(NewAgeFragment.Scenario.EditEntity(item.birthdayEntity), this), BackStackBehaviour.Add, TransactionAnimation.PresentBottom)
             }
             is AgesAdapter.Item.AddAge -> {
-                showFragment(NewAgeFragment.newInstance(NewAgeFragment.Scenario.NewEntity), BackStackBehaviour.Add, TransactionAnimation.PresentBottom)
+                showFragment(NewAgeFragment.newInstance(NewAgeFragment.Scenario.NewEntity, this), BackStackBehaviour.Add, TransactionAnimation.PresentBottom)
             }
         }
     }

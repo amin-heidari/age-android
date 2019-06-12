@@ -79,7 +79,7 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
             }
 
         private fun refreshAge() {
-            if (isRefreshingAge) {
+            if (isRefreshingAge && isRecyclerViewVisible) {
                 birthdayTextView.text = ageCalculator?.currentAge?.full
                 Handler().postDelayed({
                     refreshAge()
@@ -181,11 +181,52 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
         DiffUtil.calculateDiff(ItemsDiffCallback(oldValue, newValue)).dispatchUpdatesTo(this)
     }
 
+    /**
+     * Looks like I have no choice but to make this adapter a little bit life cycle aware.
+     */
+    var isRecyclerViewVisible: Boolean = false
+
     // endregion
 
     // ====================================================================================================
     // region Life Cycle
     // ====================================================================================================
+
+    override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
+        super.onViewAttachedToWindow(holder)
+
+//        Logger.d("lalala", String.format("onViewAttachedToWindow -> %d", holder.hashCode()))
+
+        (holder as? AgeRefresher)?.isRefreshingAge = true
+    }
+
+    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+
+//        Logger.d("lalala", String.format("onViewDetachedFromWindow -> %d", holder.hashCode()))
+
+        (holder as? AgeRefresher)?.isRefreshingAge = false
+    }
+
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+
+//        isAttachedToRecyclerView = true
+
+//        Logger.d("lalala", String.format("onAttachedToRecyclerView -> %d", this.hashCode()))
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+
+//        Logger.d("lalala", String.format("onDetachedFromRecyclerView -> %d", this.hashCode()))
+    }
+
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        super.onViewRecycled(holder)
+
+//        Logger.d("lalala", String.format("onViewRecycled -> %d", holder.hashCode()))
+    }
 
     // endregion
 
@@ -247,18 +288,6 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
             }
             else -> Unit
         }
-    }
-
-    override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
-        super.onViewAttachedToWindow(holder)
-
-        (holder as? AgeRefresher)?.isRefreshingAge = true
-    }
-
-    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
-        super.onViewDetachedFromWindow(holder)
-
-        (holder as? AgeRefresher)?.isRefreshingAge = false
     }
 
     // endregion

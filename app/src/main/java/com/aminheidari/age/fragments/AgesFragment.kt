@@ -51,8 +51,12 @@ class AgesFragment : BaseFragment(), OnItemSelectedListener<AgesAdapter.Item> {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        recyclerView.layoutManager = LinearLayoutManager(view.context)
-        recyclerView.adapter = AgesAdapter(this)
+        synchronized(this) {
+            if (recyclerView.adapter == null) {
+                recyclerView.layoutManager = LinearLayoutManager(view.context)
+                recyclerView.adapter = AgesAdapter(this)
+            }
+        }
 
         DatabaseManager.birthdays.observe(this, birthdaysObserver)
     }
@@ -66,7 +70,18 @@ class AgesFragment : BaseFragment(), OnItemSelectedListener<AgesAdapter.Item> {
     override fun onStart() {
         super.onStart()
 
-        (recyclerView.adapter as? AgesAdapter)?.items = adapterItems
+        (recyclerView.adapter as? AgesAdapter)?.apply {
+            items = adapterItems
+            isRecyclerViewVisible = true
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        (recyclerView.adapter as? AgesAdapter)?.apply {
+            isRecyclerViewVisible = false
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

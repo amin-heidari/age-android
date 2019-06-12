@@ -3,6 +3,7 @@ package com.aminheidari.age.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.aminheidari.age.R
@@ -10,6 +11,7 @@ import com.aminheidari.age.database.entities.BirthdayEntity
 import com.aminheidari.age.models.Birthday
 import com.aminheidari.age.utils.ItemBinder
 import com.aminheidari.age.utils.OnItemSelectedListener
+import com.aminheidari.age.utils.birthday
 import kotlin.properties.Delegates
 
 class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -40,12 +42,19 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
     }
 
     inner class MyAgeViewHolder(view: View): RecyclerView.ViewHolder(view), View.OnClickListener, ItemBinder<Birthday> {
+        private val nameTextView: TextView = view.findViewById(R.id.nameTextView)
+        private val birthdayTextView: TextView = view.findViewById(R.id.birthdayTextView)
+        private val defaultTextView: TextView = view.findViewById(R.id.defaultTextView)
 
         init {
             view.setOnClickListener(this)
         }
 
-        override fun bind(item: Birthday) { }
+        override fun bind(item: Birthday) {
+            nameTextView.text = item.name
+            birthdayTextView.text = String.format("%d - %d - %d", item.birthDate.year, item.birthDate.month, item.birthDate.day)
+            defaultTextView.visibility = View.VISIBLE
+        }
 
         override fun onClick(view: View?) {
             onItemSelectedListener.onItemSelected(items[adapterPosition])
@@ -54,12 +63,20 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
     }
 
     inner class AgeViewHolder(view: View): RecyclerView.ViewHolder(view), View.OnClickListener, ItemBinder<BirthdayEntity> {
+        private val nameTextView: TextView = view.findViewById(R.id.nameTextView)
+        private val birthdayTextView: TextView = view.findViewById(R.id.birthdayTextView)
+        private val defaultTextView: TextView = view.findViewById(R.id.defaultTextView)
 
         init {
             view.setOnClickListener(this)
         }
 
-        override fun bind(item: BirthdayEntity) { }
+        override fun bind(item: BirthdayEntity) {
+            val birthday = item.birthday
+            nameTextView.text = birthday.name
+            birthdayTextView.text = String.format("%d - %d - %d", birthday.birthDate.year, birthday.birthDate.month, birthday.birthDate.day)
+            defaultTextView.visibility = View.GONE
+        }
 
         override fun onClick(view: View?) {
             onItemSelectedListener.onItemSelected(items[adapterPosition])

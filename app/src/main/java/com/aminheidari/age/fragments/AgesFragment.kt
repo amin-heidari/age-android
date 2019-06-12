@@ -25,10 +25,6 @@ class AgesFragment : BaseFragment(), OnItemSelectedListener<AgesAdapter.Item> {
 
     companion object {
 
-        private const val ITEM_MY_AGE = 0
-        private const val ITEM_AGE = 1
-        private const val ITEM_ADD_AGE = 2
-
         @JvmStatic
         fun newInstance() = AgesFragment()
 

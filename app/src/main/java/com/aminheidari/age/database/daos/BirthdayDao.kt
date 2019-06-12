@@ -6,7 +6,7 @@ import com.aminheidari.age.database.entities.BirthdayEntity
 
 @Dao
 interface BirthdayDao {
-    @Query("SELECT * FROM BirthdayEntity ORDER BY created ASC")
+    @Query("SELECT * FROM BirthdayEntity ORDER BY created DESC")
     fun getAll(): LiveData<List<BirthdayEntity>>
 
     @Insert

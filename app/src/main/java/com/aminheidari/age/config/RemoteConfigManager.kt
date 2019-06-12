@@ -2,13 +2,9 @@ package com.aminheidari.age.config
 
 import com.aminheidari.age.constants.Constants
 import com.aminheidari.age.models.AppException
-import com.aminheidari.age.models.Completion
-import com.aminheidari.age.models.Either
+import com.aminheidari.age.utils.Completion
 import com.aminheidari.age.models.RemoteConfig
-import com.aminheidari.age.utils.Logger
-import com.aminheidari.age.utils.PreferencesUtil
-import com.aminheidari.age.utils.addingTimerInterval
-import com.aminheidari.age.utils.retrofitCallback
+import com.aminheidari.age.utils.*
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory

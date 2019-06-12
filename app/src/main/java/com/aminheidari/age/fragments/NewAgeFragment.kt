@@ -8,6 +8,7 @@ import android.text.TextWatcher
 import android.view.*
 import com.aminheidari.age.R
 import com.aminheidari.age.config.RemoteConfigManager
+import com.aminheidari.age.database.DatabaseManager
 import com.aminheidari.age.database.entities.BirthdayEntity
 import com.aminheidari.age.dialogs.DatePickerDialogFragment
 import com.aminheidari.age.models.BirthDate
@@ -200,7 +201,7 @@ class NewAgeFragment : BaseFragment() {
     }
 
     private val proceedButtonOnClickListener = View.OnClickListener {
-        when (scenario) {
+        when (val currentScenario = scenario) {
             is Scenario.NewDefault -> {
                 PreferencesUtil.defaultBirthday = Birthday(editingBirthDate!!, nameEditText.text.toString())
 
@@ -211,10 +212,16 @@ class NewAgeFragment : BaseFragment() {
 
                 finishWithResult(Result.UpdatedDefault)
             }
-            is Scenario.NewEntity, is Scenario.EditEntity -> {
+            is Scenario.NewEntity -> {
                 // TODO: Make the db update.
 
                 finishWithResult(Result.ModifiedEntities)
+            }
+            is Scenario.EditEntity -> {
+                // TODO: Show loading state on UI.
+                DatabaseManager.deleteBirthday(currentScenario.birthdayEntity) {
+                    finishWithResult(Result.ModifiedEntities)
+                }
             }
         }
     }

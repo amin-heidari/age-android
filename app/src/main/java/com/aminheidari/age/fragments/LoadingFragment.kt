@@ -1,7 +1,5 @@
 package com.aminheidari.age.fragments
 
-import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,13 +8,10 @@ import com.aminheidari.age.BuildConfig
 import com.aminheidari.age.R
 import com.aminheidari.age.config.RemoteConfigManager
 import com.aminheidari.age.models.AppException
-import com.aminheidari.age.models.Either
 import com.aminheidari.age.models.RemoteConfig
 import com.aminheidari.age.utils.*
 import kotlinx.android.synthetic.main.fragment_loading.*
 import retrofit2.Call
-import java.util.*
-import kotlin.math.absoluteValue
 
 class LoadingFragment : BaseFragment() {
 

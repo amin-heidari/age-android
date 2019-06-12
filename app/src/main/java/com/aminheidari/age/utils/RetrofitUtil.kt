@@ -1,8 +1,7 @@
 package com.aminheidari.age.utils
 
 import com.aminheidari.age.models.AppException
-import com.aminheidari.age.models.Completion
-import com.aminheidari.age.models.Either
+import com.aminheidari.age.utils.Completion
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

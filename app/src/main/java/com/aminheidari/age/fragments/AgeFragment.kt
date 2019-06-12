@@ -85,10 +85,10 @@ class AgeFragment : BaseFragment() {
 
     private fun refreshAge() {
         if (isResumed) {
-            ageTextView.text = ageCalculator.currentAge.full
+            ageTextView.text = String.format("%10.8f", ageCalculator.currentAge.value)
             Handler().postDelayed({
                 refreshAge()
-            }, 1)
+            }, 10)
         }
     }
 

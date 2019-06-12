@@ -80,10 +80,10 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
 
         private fun refreshAge() {
             if (isRefreshingAge && isRecyclerViewVisible) {
-                birthdayTextView.text = ageCalculator?.currentAge?.full
+                birthdayTextView.text = String.format("%10.8f", ageCalculator!!.currentAge.value)
                 Handler().postDelayed({
                     refreshAge()
-                }, 1)
+                }, 10)
             }
         }
 
@@ -127,10 +127,10 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
 
         private fun refreshAge() {
             if (isRefreshingAge && isRecyclerViewVisible) {
-                birthdayTextView.text = ageCalculator?.currentAge?.full
+                birthdayTextView.text = String.format("%10.8f", ageCalculator!!.currentAge.value)
                 Handler().postDelayed({
                     refreshAge()
-                }, 1)
+                }, 10)
             }
         }
 

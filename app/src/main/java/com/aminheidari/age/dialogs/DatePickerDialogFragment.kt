@@ -101,7 +101,6 @@ class DatePickerDialogFragment : BaseDialogFragment() {
     // ====================================================================================================
 
     private val onDateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, day ->
-//        Logger.d("lalala", String.format("Picked %d, %d, %d", year, month, day))
         targetFragment?.let { target ->
             target.onActivityResult(requestCode, Activity.RESULT_OK, Intent().apply { putExtra(PICKED_BIRTH_DATE, BirthDate(year, month, day)) })
         }

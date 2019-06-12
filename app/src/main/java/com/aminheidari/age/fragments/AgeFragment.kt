@@ -1,11 +1,14 @@
 package com.aminheidari.age.fragments
 
 import android.os.Bundle
+import android.os.Handler
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.aminheidari.age.R
+import com.aminheidari.age.calculator.AgeCalculator
+import com.aminheidari.age.utils.AppExecutors
 import com.aminheidari.age.utils.BackStackBehaviour
 import com.aminheidari.age.utils.PreferencesUtil
 import com.aminheidari.age.utils.showFragment
@@ -54,17 +57,40 @@ class AgeFragment : BaseFragment() {
         agesButton.setOnClickListener(agesButtonOnClickListener)
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        ageCalculator = AgeCalculator(PreferencesUtil.defaultBirthday!!.birthDate)
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        refreshAge()
+    }
+
     // endregion
 
     // ====================================================================================================
     // region Properties
     // ====================================================================================================
 
+    private var ageCalculator: AgeCalculator = AgeCalculator(PreferencesUtil.defaultBirthday!!.birthDate)
+
     // endregion
 
     // ====================================================================================================
     // region Methods
     // ====================================================================================================
+
+    private fun refreshAge() {
+        if (isResumed) {
+            ageTextView.text = ageCalculator.currentAge.full
+            Handler().postDelayed({
+                refreshAge()
+            }, 1)
+        }
+    }
 
     // endregion
 

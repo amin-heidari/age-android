@@ -1,5 +1,6 @@
 package com.aminheidari.age.adapters
 
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,9 +8,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.aminheidari.age.R
+import com.aminheidari.age.calculator.AgeCalculator
 import com.aminheidari.age.database.entities.BirthdayEntity
 import com.aminheidari.age.models.Birthday
 import com.aminheidari.age.utils.ItemBinder
+import com.aminheidari.age.utils.Logger
 import com.aminheidari.age.utils.OnItemSelectedListener
 import com.aminheidari.age.utils.birthday
 import kotlin.properties.Delegates
@@ -41,10 +44,12 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
             }
     }
 
-    inner class MyAgeViewHolder(view: View): RecyclerView.ViewHolder(view), View.OnClickListener, ItemBinder<Birthday> {
+    inner class MyAgeViewHolder(view: View): RecyclerView.ViewHolder(view), View.OnClickListener, ItemBinder<Birthday>, AgeRefresher {
         private val nameTextView: TextView = view.findViewById(R.id.nameTextView)
         private val birthdayTextView: TextView = view.findViewById(R.id.birthdayTextView)
         private val defaultTextView: TextView = view.findViewById(R.id.defaultTextView)
+
+        private var ageCalculator: AgeCalculator? = null
 
         init {
             view.setOnClickListener(this)
@@ -54,10 +59,32 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
             nameTextView.text = item.name
             birthdayTextView.text = String.format("%d - %d - %d", item.birthDate.year, item.birthDate.month, item.birthDate.day)
             defaultTextView.visibility = View.VISIBLE
+
+            ageCalculator = AgeCalculator(item.birthDate)
         }
 
         override fun onClick(view: View?) {
             onItemSelectedListener.onItemSelected(items[adapterPosition])
+        }
+
+        private var _isRefreshingAge: Boolean = false
+        override var isRefreshingAge: Boolean
+            get() = _isRefreshingAge
+            set(value) {
+                _isRefreshingAge = value
+
+                if (value) {
+                    refreshAge()
+                }
+            }
+
+        private fun refreshAge() {
+            if (isRefreshingAge) {
+                birthdayTextView.text = ageCalculator?.currentAge?.full
+                Handler().postDelayed({
+                    refreshAge()
+                }, 1)
+            }
         }
 
     }
@@ -132,6 +159,10 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
             }
         }
 
+    }
+
+    private interface AgeRefresher {
+        var isRefreshingAge: Boolean
     }
 
     // endregion
@@ -220,10 +251,14 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
 
     override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
         super.onViewAttachedToWindow(holder)
+
+        (holder as? AgeRefresher)?.isRefreshingAge = true
     }
 
     override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
         super.onViewDetachedFromWindow(holder)
+
+        (holder as? AgeRefresher)?.isRefreshingAge = false
     }
 
     // endregion

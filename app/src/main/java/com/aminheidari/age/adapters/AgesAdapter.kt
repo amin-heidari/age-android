@@ -89,10 +89,12 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
 
     }
 
-    inner class AgeViewHolder(view: View): RecyclerView.ViewHolder(view), View.OnClickListener, ItemBinder<BirthdayEntity> {
+    inner class AgeViewHolder(view: View): RecyclerView.ViewHolder(view), View.OnClickListener, ItemBinder<BirthdayEntity>, AgeRefresher {
         private val nameTextView: TextView = view.findViewById(R.id.nameTextView)
         private val birthdayTextView: TextView = view.findViewById(R.id.birthdayTextView)
         private val defaultTextView: TextView = view.findViewById(R.id.defaultTextView)
+
+        private var ageCalculator: AgeCalculator? = null
 
         init {
             view.setOnClickListener(this)
@@ -100,13 +102,36 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
 
         override fun bind(item: BirthdayEntity) {
             val birthday = item.birthday
+
             nameTextView.text = birthday.name
             birthdayTextView.text = String.format("%d - %d - %d", birthday.birthDate.year, birthday.birthDate.month, birthday.birthDate.day)
             defaultTextView.visibility = View.GONE
+
+            ageCalculator = AgeCalculator(birthday.birthDate)
         }
 
         override fun onClick(view: View?) {
             onItemSelectedListener.onItemSelected(items[adapterPosition])
+        }
+
+        private var _isRefreshingAge: Boolean = false
+        override var isRefreshingAge: Boolean
+            get() = _isRefreshingAge
+            set(value) {
+                _isRefreshingAge = value
+
+                if (value) {
+                    refreshAge()
+                }
+            }
+
+        private fun refreshAge() {
+            if (isRefreshingAge && isRecyclerViewVisible) {
+                birthdayTextView.text = ageCalculator?.currentAge?.full
+                Handler().postDelayed({
+                    refreshAge()
+                }, 1)
+            }
         }
 
     }
@@ -195,37 +220,13 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
     override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
         super.onViewAttachedToWindow(holder)
 
-//        Logger.d("lalala", String.format("onViewAttachedToWindow -> %d", holder.hashCode()))
-
         (holder as? AgeRefresher)?.isRefreshingAge = true
     }
 
     override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
         super.onViewDetachedFromWindow(holder)
 
-//        Logger.d("lalala", String.format("onViewDetachedFromWindow -> %d", holder.hashCode()))
-
         (holder as? AgeRefresher)?.isRefreshingAge = false
-    }
-
-    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-        super.onAttachedToRecyclerView(recyclerView)
-
-//        isAttachedToRecyclerView = true
-
-//        Logger.d("lalala", String.format("onAttachedToRecyclerView -> %d", this.hashCode()))
-    }
-
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView)
-
-//        Logger.d("lalala", String.format("onDetachedFromRecyclerView -> %d", this.hashCode()))
-    }
-
-    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
-        super.onViewRecycled(holder)
-
-//        Logger.d("lalala", String.format("onViewRecycled -> %d", holder.hashCode()))
     }
 
     // endregion

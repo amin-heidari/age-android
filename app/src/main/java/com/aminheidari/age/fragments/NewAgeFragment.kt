@@ -146,6 +146,12 @@ class NewAgeFragment : BaseFragment() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        updateProceedButton()
+    }
+
     // endregion
 
     // ====================================================================================================

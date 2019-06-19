@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.*
+import android.widget.DatePicker
 import com.aminheidari.age.R
 import com.aminheidari.age.config.RemoteConfigManager
 import com.aminheidari.age.database.DatabaseManager
@@ -218,7 +219,15 @@ class NewAgeFragment : BaseFragment() {
 
     private val dateTextViewOnClickListener = View.OnClickListener {
         editingBirthDate?.let { bd ->
-            DatePickerDialogFragment.showNewInstance(this, bd)
+            val todayBirthDate = Calendar.getInstance().time.birthDate
+            DatePickerDialogFragment.showNewInstance(
+                this,
+                DatePickerDialogFragment.Input(
+                    bd,
+                    todayBirthDate,
+                    BirthDate(todayBirthDate.year - RemoteConfigManager.remoteConfig.ageSpecs.maxAge, todayBirthDate.month, todayBirthDate.day)
+                )
+            )
         }
     }
 

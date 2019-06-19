@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.provider.SyncStateContract
 import android.renderscript.ScriptGroup
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -12,6 +13,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.aminheidari.age.R
+import com.aminheidari.age.config.RemoteConfigManager
+import com.aminheidari.age.constants.Constants
 import com.aminheidari.age.fragments.BaseFragment
 import com.aminheidari.age.fragments.NewAgeFragment
 import com.aminheidari.age.models.BirthDate
@@ -19,6 +22,8 @@ import com.aminheidari.age.utils.INPUT
 import java.io.Serializable
 import com.aminheidari.age.utils.Logger
 import com.aminheidari.age.utils.RESULT
+import com.aminheidari.age.utils.addingYears
+import java.util.*
 
 class DatePickerDialogFragment : BaseDialogFragment() {
 
@@ -32,7 +37,7 @@ class DatePickerDialogFragment : BaseDialogFragment() {
 
         @JvmStatic
         fun showNewInstance(targetFragment: BaseFragment,
-                            input: BirthDate
+                            input: Input
         ) {
             val fragment = DatePickerDialogFragment()
 
@@ -53,6 +58,12 @@ class DatePickerDialogFragment : BaseDialogFragment() {
     // region Constants/Types
     // ====================================================================================================
 
+    data class Input(
+        val initialDate: BirthDate,
+        val minDate: BirthDate,
+        val maxDate: BirthDate
+    ): Serializable
+
     // endregion
 
     // ====================================================================================================
@@ -70,11 +81,14 @@ class DatePickerDialogFragment : BaseDialogFragment() {
 
         // If the back button needs to be blocked.
         // https://stackoverflow.com/a/10171885
-        isCancelable = false
+        isCancelable = true
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        return DatePickerDialog(context!!, onDateSetListener, initialBirthDate.year, initialBirthDate.month, initialBirthDate.day)
+        val dialog = DatePickerDialog(context!!, onDateSetListener, input.initialDate.year, input.initialDate.month, input.initialDate.day)
+        dialog.datePicker.maxDate = input.minDate.date.time
+        dialog.datePicker.minDate = input.maxDate.date.time
+        return dialog
     }
 
     override fun onStart() {
@@ -89,7 +103,7 @@ class DatePickerDialogFragment : BaseDialogFragment() {
     // region Properties
     // ====================================================================================================
 
-    private val initialBirthDate: BirthDate by lazy { arguments!!.getSerializable(INPUT) as BirthDate }
+    private val input: Input by lazy { arguments!!.getSerializable(INPUT) as Input }
 
     // endregion
 

@@ -15,8 +15,10 @@ import com.aminheidari.age.R
 import com.aminheidari.age.fragments.BaseFragment
 import com.aminheidari.age.fragments.NewAgeFragment
 import com.aminheidari.age.models.BirthDate
+import com.aminheidari.age.utils.INPUT
 import java.io.Serializable
 import com.aminheidari.age.utils.Logger
+import com.aminheidari.age.utils.RESULT
 
 class DatePickerDialogFragment : BaseDialogFragment() {
 
@@ -26,26 +28,19 @@ class DatePickerDialogFragment : BaseDialogFragment() {
 
     companion object {
 
-        val requestCode: Int by lazy { DatePickerDialogFragment::class.hashCode() }
-
-        private const val INITIAL_BIRTH_DATE = "INITIAL_BIRTH_DATE"
-        const val PICKED_BIRTH_DATE = "PICKED_BIRTH_DATE"
+        const val REQUEST_CODE: Int = 20
 
         @JvmStatic
         fun showNewInstance(targetFragment: BaseFragment,
-                            initialBirthDate: BirthDate
+                            input: BirthDate
         ) {
             val fragment = DatePickerDialogFragment()
 
             val args = Bundle()
-            args.putSerializable(INITIAL_BIRTH_DATE, initialBirthDate)
+            args.putSerializable(INPUT, input)
             fragment.arguments = args
 
-            fragment.setTargetFragment(targetFragment, requestCode)
-
-            // If the back button needs to be blocked.
-            // https://stackoverflow.com/a/10171885
-            fragment.isCancelable = false
+            fragment.setTargetFragment(targetFragment, REQUEST_CODE)
 
             targetFragment.activity?.let { fragment.show(it.supportFragmentManager, AlertDialogFragment::class.java.canonicalName) }
         }
@@ -70,6 +65,14 @@ class DatePickerDialogFragment : BaseDialogFragment() {
     // region Life Cycle
     // ====================================================================================================
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // If the back button needs to be blocked.
+        // https://stackoverflow.com/a/10171885
+        isCancelable = false
+    }
+
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return DatePickerDialog(context!!, onDateSetListener, initialBirthDate.year, initialBirthDate.month, initialBirthDate.day)
     }
@@ -86,7 +89,7 @@ class DatePickerDialogFragment : BaseDialogFragment() {
     // region Properties
     // ====================================================================================================
 
-    private val initialBirthDate: BirthDate by lazy { arguments!!.getSerializable(INITIAL_BIRTH_DATE) as BirthDate }
+    private val initialBirthDate: BirthDate by lazy { arguments!!.getSerializable(INPUT) as BirthDate }
 
     // endregion
 
@@ -102,7 +105,7 @@ class DatePickerDialogFragment : BaseDialogFragment() {
 
     private val onDateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, day ->
         targetFragment?.let { target ->
-            target.onActivityResult(requestCode, Activity.RESULT_OK, Intent().apply { putExtra(PICKED_BIRTH_DATE, BirthDate(year, month, day)) })
+            target.onActivityResult(REQUEST_CODE, Activity.RESULT_OK, Intent().apply { putExtra(RESULT, BirthDate(year, month, day)) })
         }
     }
 

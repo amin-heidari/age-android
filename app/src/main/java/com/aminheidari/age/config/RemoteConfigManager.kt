@@ -56,7 +56,7 @@ object RemoteConfigManager {
         // Check if there's a fresh copy of the remote config cached.
         if (cachedRemoteConfig != null && cachedRemoteConfig!!.isFresh) {
             completion(Either.Success(cachedRemoteConfig!!.remoteConfig))
-            return null;
+            return null
         } else {
             // There either isn't a cache, or if there is one, it's not fresh. So try to make the api call.
             val call = apiClient.getRemoteConfig()

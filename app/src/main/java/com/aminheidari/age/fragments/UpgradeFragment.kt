@@ -88,7 +88,10 @@ class UpgradeFragment : BaseFragment() {
             if (intent.resolveActivity(activity.packageManager) != null) {
                 startActivity(intent)
             } else {
-                AlertDialogFragment.showNewInstance(this, R.string.error, R.string.sorry, R.string.ok)
+                AlertDialogFragment.showNewInstance(
+                    this,
+                    AlertDialogFragment.Input.Informational(R.string.sorry, R.string.error, R.string.ok)
+                )
             }
         }
     }

@@ -135,12 +135,8 @@ class NewAgeFragment : BaseFragment() {
         super.onActivityResult(requestCode, resultCode, data)
 
         when (requestCode) {
-            DatePickerDialogFragment.requestCode -> {
-                data?.let { data ->
-                    (data.getSerializableExtra(DatePickerDialogFragment.PICKED_BIRTH_DATE) as? BirthDate)?.let { result ->
-                        editingBirthDate = result
-                    }
-                }
+            DatePickerDialogFragment.REQUEST_CODE -> {
+                editingBirthDate = data?.getSerializableExtra(RESULT) as? BirthDate
             }
             else -> Unit
         }

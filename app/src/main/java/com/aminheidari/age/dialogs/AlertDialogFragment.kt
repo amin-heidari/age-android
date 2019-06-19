@@ -3,24 +3,24 @@ package com.aminheidari.age.dialogs
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import com.aminheidari.age.utils.INPUT
+import com.aminheidari.age.utils.RESULT
+import java.io.Serializable
 import java.lang.IllegalStateException
 
 class AlertDialogFragment : BaseDialogFragment() {
 
     // ====================================================================================================
-    // region Constants/Types
+    // region Static
     // ====================================================================================================
 
     companion object {
 
-        private const val TITLE = "TITLE"
-        private const val MESSAGE = "MESSAGE"
-        private const val NEUTRAL_BUTTON = "NEUTRAL_BUTTON"
-
         // The unique request code which belongs to this fragment only.
-        const val requestCode = 10
+        const val REQUEST_CODE: Int = 30
 
         /**
          * https://stackoverflow.com/a/47514643
@@ -28,19 +28,15 @@ class AlertDialogFragment : BaseDialogFragment() {
          */
         @JvmStatic
         fun showNewInstance(targetFragment: Fragment,
-                            title: Int? = null,
-                            message: Int? = null,
-                            neutralButton: Int? = null)
+                            input: Input)
         {
             val fragment = AlertDialogFragment()
 
             val args = Bundle()
-            title?.let { args.putInt(TITLE, it) }
-            message?.let { args.putInt(MESSAGE, it) }
-            neutralButton?.let { args.putInt(NEUTRAL_BUTTON, it) }
+            args.putSerializable(INPUT, input)
             fragment.arguments = args
 
-            fragment.setTargetFragment(targetFragment, requestCode)
+            fragment.setTargetFragment(targetFragment, REQUEST_CODE)
 
             // If the back button needs to be blocked.
             // https://stackoverflow.com/a/10171885
@@ -54,8 +50,26 @@ class AlertDialogFragment : BaseDialogFragment() {
     // endregion
 
     // ====================================================================================================
-    // region Static
+    // region Constants/Types
     // ====================================================================================================
+
+    sealed class Input: Serializable {
+        /**
+         * Just to give user some information.
+         */
+        data class Informational(val title: Int?, val message: Int, val neutralButton: Int): Input()
+
+        /**
+         * To confirm and proceed with an action.
+         */
+        data class Proceed(val title: Int?, val message: Int, val positiveButton: Int, val negativeButton: Int): Input()
+    }
+
+    sealed class Result: Serializable {
+        object Neutral: Result()
+        object Negative: Result()
+        object Positive: Result()
+    }
 
     // endregion
 
@@ -73,16 +87,43 @@ class AlertDialogFragment : BaseDialogFragment() {
         return activity?.let { activity ->
             val builder = AlertDialog.Builder(activity)
 
-            arguments?.let { args ->
-                if (args.containsKey(TITLE)) {
-                    builder.setTitle(args.getInt(TITLE))
+            when (val inputVal = input) {
+                is Input.Informational -> {
+                    inputVal.title?.let {
+                        builder.setTitle(it)
+                    }
+                    builder.setMessage(inputVal.message)
+                    builder.setNeutralButton(inputVal.neutralButton) { _, _ ->
+                        targetFragment?.onActivityResult(
+                            REQUEST_CODE,
+                            Activity.RESULT_OK,
+                            Intent().apply {
+                                putExtra(RESULT, Result.Neutral)
+                            })
+                    }
                 }
-                if (args.containsKey(MESSAGE)) {
-                    builder.setMessage(args.getInt(MESSAGE))
-                }
-                if (args.containsKey(NEUTRAL_BUTTON)) {
-                    builder.setNeutralButton(args.getInt(NEUTRAL_BUTTON)) { _, _ ->
-                        targetFragment?.onActivityResult(targetRequestCode, Activity.RESULT_CANCELED, null)
+                is Input.Proceed -> {
+                    inputVal.title?.let {
+                        builder.setTitle(it)
+                    }
+                    builder.setMessage(inputVal.message)
+                    builder.setPositiveButton(inputVal.positiveButton) { _, _ ->
+                        targetFragment?.onActivityResult(
+                            REQUEST_CODE,
+                            Activity.RESULT_OK,
+                            Intent().apply {
+                                putExtra(RESULT, Result.Positive)
+                            }
+                        )
+                    }
+                    builder.setNegativeButton(inputVal.negativeButton) { _, _ ->
+                        targetFragment?.onActivityResult(
+                            REQUEST_CODE,
+                            Activity.RESULT_OK,
+                            Intent().apply {
+                                putExtra(RESULT, Result.Negative)
+                            }
+                        )
                     }
                 }
             }
@@ -103,6 +144,8 @@ class AlertDialogFragment : BaseDialogFragment() {
     // ====================================================================================================
     // region Properties
     // ====================================================================================================
+
+    private val input: Input by lazy { arguments!!.getSerializable(INPUT) as Input }
 
     // endregion
 

@@ -116,7 +116,7 @@ class AgesFragment : BaseFragment(), OnItemSelectedListener<AgesAdapter.Item> {
     // region Properties
     // ====================================================================================================
 
-    private val birthdaysObserver = Observer<List<BirthdayEntity>> { birthdays ->
+    private val birthdaysObserver = Observer<List<BirthdayEntity>> { _ ->
         refreshAdapterItems()
     }
 

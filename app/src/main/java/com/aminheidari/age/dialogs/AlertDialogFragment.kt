@@ -38,10 +38,6 @@ class AlertDialogFragment : BaseDialogFragment() {
 
             fragment.setTargetFragment(targetFragment, REQUEST_CODE)
 
-            // If the back button needs to be blocked.
-            // https://stackoverflow.com/a/10171885
-            fragment.isCancelable = true
-
             targetFragment.activity?.let { fragment.show(it.supportFragmentManager, AlertDialogFragment::class.java.canonicalName) }
         }
 
@@ -136,7 +132,19 @@ class AlertDialogFragment : BaseDialogFragment() {
     override fun onStart() {
         super.onStart()
 
-        dialog.setCanceledOnTouchOutside(false)
+        // Further setup based on the input.
+        when (input) {
+            is Input.Informational -> {
+                // If the back button needs to be blocked.
+                // https://stackoverflow.com/a/10171885
+                isCancelable = true
+                dialog.setCanceledOnTouchOutside(false)
+            }
+            is Input.Proceed -> {
+                isCancelable = false
+                dialog.setCanceledOnTouchOutside(false)
+            }
+        }
     }
 
     // endregion

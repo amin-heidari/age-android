@@ -69,13 +69,19 @@ class AgeFragment : BaseFragment() {
         refreshAge()
     }
 
+    override fun onStop() {
+        super.onStop()
+
+        ageCalculator = null
+    }
+
     // endregion
 
     // ====================================================================================================
     // region Properties
     // ====================================================================================================
 
-    private var ageCalculator: AgeCalculator = AgeCalculator(PreferencesUtil.defaultBirthday!!.birthDate)
+    private var ageCalculator: AgeCalculator? = null
 
     // endregion
 
@@ -84,11 +90,13 @@ class AgeFragment : BaseFragment() {
     // ====================================================================================================
 
     private fun refreshAge() {
-        if (isResumed) {
-            ageTextView.text = String.format("%10.8f", ageCalculator.currentAge.value)
-            Handler().postDelayed({
-                refreshAge()
-            }, 10)
+        ageCalculator?.let { calculator ->
+            if (isResumed) {
+                ageTextView.text = String.format("%10.8f", calculator.currentAge.value)
+                Handler().postDelayed({
+                    refreshAge()
+                }, 10)
+            }
         }
     }
 

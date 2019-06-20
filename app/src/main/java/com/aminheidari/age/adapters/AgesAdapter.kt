@@ -177,7 +177,13 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
     // ====================================================================================================
 
     var items: List<Item> by Delegates.observable(emptyList()) { _, oldValue, newValue ->
-        DiffUtil.calculateDiff(ItemsDiffCallback(oldValue, newValue)).dispatchUpdatesTo(this)
+        if (oldValue.none { it !is Item.AddAge }) {
+            // If we're updating an empty list of birthdays (i.e. the first time), we'll do it at once without animations.
+            notifyDataSetChanged()
+        } else {
+            // Otherwise, DiffUtil and animations.
+            DiffUtil.calculateDiff(ItemsDiffCallback(oldValue, newValue)).dispatchUpdatesTo(this)
+        }
     }
 
     /**

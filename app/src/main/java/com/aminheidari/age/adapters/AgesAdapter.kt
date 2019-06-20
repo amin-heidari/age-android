@@ -44,7 +44,7 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
             }
     }
 
-    inner class MyAgeViewHolder(view: View): RecyclerView.ViewHolder(view), View.OnClickListener, ItemBinder<Birthday>, AgeRefresher {
+    inner class AgeViewHolder(view: View): RecyclerView.ViewHolder(view), View.OnClickListener, ItemBinder<Item>, AgeRefresher {
         private val nameTextView: TextView = view.findViewById(R.id.nameTextView)
         private val birthdayTextView: TextView = view.findViewById(R.id.birthdayTextView)
         private val defaultTextView: TextView = view.findViewById(R.id.defaultTextView)
@@ -55,61 +55,30 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
             view.setOnClickListener(this)
         }
 
-        override fun bind(item: Birthday) {
-            nameTextView.text = item.name
-            birthdayTextView.text = String.format("%d - %d - %d", item.birthDate.year, item.birthDate.month, item.birthDate.day)
-            defaultTextView.visibility = View.VISIBLE
+        override fun bind(item: Item) {
+            when (item) {
+                is Item.MyAge -> {
+                    val birthday = item.birthday
 
-            ageCalculator = AgeCalculator(item.birthDate)
-        }
+                    nameTextView.text = birthday.name
+                    birthdayTextView.text = String.format("%d - %d - %d", birthday.birthDate.year, birthday.birthDate.month, birthday.birthDate.day)
+                    defaultTextView.visibility = View.VISIBLE
 
-        override fun onClick(view: View?) {
-            onItemSelectedListener.onItemSelected(items[adapterPosition])
-        }
+                    ageCalculator = AgeCalculator(birthday.birthDate)
+                }
+                is Item.Age -> {
+                    val birthday = item.birthdayEntity.birthday
 
-        private var _isRefreshingAge: Boolean = false
-        override var isRefreshingAge: Boolean
-            get() = _isRefreshingAge
-            set(value) {
-                _isRefreshingAge = value
+                    nameTextView.text = birthday.name
+                    birthdayTextView.text = String.format("%d - %d - %d", birthday.birthDate.year, birthday.birthDate.month, birthday.birthDate.day)
+                    defaultTextView.visibility = View.GONE
 
-                if (value) {
-                    refreshAge()
+                    ageCalculator = AgeCalculator(birthday.birthDate)
+                }
+                else -> {
+                    throw IllegalStateException("Not supported!")
                 }
             }
-
-        private fun refreshAge() {
-            ageCalculator?.let { calculator ->
-                if (isRefreshingAge && isRecyclerViewVisible) {
-                    birthdayTextView.text = String.format("%.8f", calculator.currentAge.value)
-                    Handler().postDelayed({
-                        refreshAge()
-                    }, 10)
-                }
-            }
-        }
-
-    }
-
-    inner class AgeViewHolder(view: View): RecyclerView.ViewHolder(view), View.OnClickListener, ItemBinder<BirthdayEntity>, AgeRefresher {
-        private val nameTextView: TextView = view.findViewById(R.id.nameTextView)
-        private val birthdayTextView: TextView = view.findViewById(R.id.birthdayTextView)
-        private val defaultTextView: TextView = view.findViewById(R.id.defaultTextView)
-
-        private var ageCalculator: AgeCalculator? = null
-
-        init {
-            view.setOnClickListener(this)
-        }
-
-        override fun bind(item: BirthdayEntity) {
-            val birthday = item.birthday
-
-            nameTextView.text = birthday.name
-            birthdayTextView.text = String.format("%d - %d - %d", birthday.birthDate.year, birthday.birthDate.month, birthday.birthDate.day)
-            defaultTextView.visibility = View.GONE
-
-            ageCalculator = AgeCalculator(birthday.birthDate)
         }
 
         override fun onClick(view: View?) {
@@ -257,14 +226,7 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            MY_AGE -> MyAgeViewHolder(
-                LayoutInflater.from(parent.context).inflate(
-                    R.layout.item_age,
-                    parent,
-                    false
-                )
-            )
-            AGE -> AgeViewHolder(
+            MY_AGE, AGE -> AgeViewHolder(
                 LayoutInflater.from(parent.context).inflate(
                     R.layout.item_age,
                     parent,
@@ -283,13 +245,9 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = items[position]
-        when (item) {
-            is Item.MyAge -> {
-                (holder as? MyAgeViewHolder)?.bind(item.birthday)
-            }
-            is Item.Age -> {
-                (holder as? AgeViewHolder)?.bind(item.birthdayEntity)
+        when (val item = items[position]) {
+            is Item.MyAge, is Item.Age -> {
+                (holder as? AgeViewHolder)?.bind(item)
             }
             else -> Unit
         }

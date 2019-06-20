@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.aminheidari.age.R
 import com.aminheidari.age.calculator.AgeCalculator
+import com.aminheidari.age.constants.Constants
 import com.aminheidari.age.utils.AppExecutors
 import com.aminheidari.age.utils.BackStackBehaviour
 import com.aminheidari.age.utils.PreferencesUtil
@@ -95,7 +96,7 @@ class AgeFragment : BaseFragment() {
                 ageTextView.text = String.format("%10.8f", calculator.currentAge.value)
                 Handler().postDelayed({
                     refreshAge()
-                }, 10)
+                }, Constants.AgeCalculation.refreshInterval)
             }
         }
     }

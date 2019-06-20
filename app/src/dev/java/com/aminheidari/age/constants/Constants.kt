@@ -23,4 +23,9 @@ object Constants {
         const val expireTime = 600
     }
 
+    object AgeCalculation {
+        // Refresh interval in mili seconds.
+        const val refreshInterval: Long = 10
+    }
+
 }

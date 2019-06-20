@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.aminheidari.age.R
 import com.aminheidari.age.calculator.AgeCalculator
+import com.aminheidari.age.constants.Constants
 import com.aminheidari.age.database.entities.BirthdayEntity
 import com.aminheidari.age.models.Birthday
 import com.aminheidari.age.utils.ItemBinder
@@ -102,7 +103,7 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
                     birthdayTextView.text = String.format("%.8f", calculator.currentAge.value)
                     Handler().postDelayed({
                         refreshAge()
-                    }, 10)
+                    }, Constants.AgeCalculation.refreshInterval)
                 }
             }
         }

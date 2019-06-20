@@ -12,23 +12,8 @@ class AgeCalculator(private val birthDate: BirthDate) {
             get() = full.toDouble() + rational
     }
 
-    private var counter = 0
-
-    private val calendar: Calendar by lazy {
-        val cal = Calendar.getInstance()
-        cal.set(Calendar.YEAR, birthDate.year)
-        cal.set(Calendar.MONTH, birthDate.month)
-        cal.set(Calendar.DAY_OF_MONTH, birthDate.day)
-        cal
-    }
-
     val currentAge: Age
         get() {
-
-            counter++
-
-            val diff = Calendar.getInstance().time.time - calendar.time.time
-
             // Evaluate the last birthday, as well as the next birthday.
             val now = Calendar.getInstance()
 
@@ -44,7 +29,7 @@ class AgeCalculator(private val birthDate: BirthDate) {
             val lastBirthday: Calendar
             val nextBirthday: Calendar
 
-            if (now.compareTo(thisYearsBirthday) > 0) { // We are past this year's birthday.
+            if (now > thisYearsBirthday) { // We are past this year's birthday.
                 lastBirthday = thisYearsBirthday.clone() as Calendar
 
                 nextBirthday = lastBirthday.clone() as Calendar
@@ -60,10 +45,6 @@ class AgeCalculator(private val birthDate: BirthDate) {
             val milisLastToNextBday = nextBirthday.time.time - lastBirthday.time.time
             val milisLastBdayToNow = now.time.time - lastBirthday.time.time
             val yearFraction: Double = milisLastBdayToNow.toDouble() / milisLastToNextBday.toDouble()
-
-            if (counter.rem(100) == 0) {
-                Logger.d("lalala", this.hashCode().toString() +  " -> Calculated!!!" + counter.toString())
-            }
 
             return Age(fullYears, yearFraction)
         }

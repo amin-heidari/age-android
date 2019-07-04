@@ -77,31 +77,43 @@ class AgeAppWidget : AppWidgetProvider() {
     // ====================================================================================================
 
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, AgeService::class.java)
+        super.onUpdate(context, appWidgetManager, appWidgetIds)
 
-        if (service == null) {
-            service = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+        Logger.d(hashCode().toString() + " onUpdate")
+
+        alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+        val intent = Intent(context, AgeService::class.java)
+//        val intent = Intent(context, AgeAppWidget::class.java)
+//        intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+//        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, AppWidgetManager.getInstance(context).getAppWidgetIds(ComponentName(context, AgeAppWidget::class.java)))
+
+        if (repeatingIntent == null) {
+            repeatingIntent = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+//            repeatingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT)
         }
 
-        alarmManager.setRepeating(AlarmManager.RTC, SystemClock.elapsedRealtime(), 60000, service)
+        alarmManager?.setRepeating(AlarmManager.RTC, SystemClock.elapsedRealtime(), 60000, repeatingIntent)
+//        alarmManager?.setExact(AlarmManager.RTC, 60000, repeatingIntent)
     }
 
-    /*
-    override fun onEnabled(context: Context) {
-        // Enter relevant functionality for when the first widget is created
-        Logger.d("onEnabled")
 
-        PreferencesUtil.defaultBirthday?.let { birthday ->
-            calculator = AgeCalculator(birthday.birthDate)
-        }
+    override fun onEnabled(context: Context) {
+        super.onEnabled(context)
+        // Enter relevant functionality for when the first widget is created
+        Logger.d(hashCode().toString() + " onEnabled")
     }
 
     override fun onDisabled(context: Context) {
-        // Enter relevant functionality for when the last widget is disabled
-        Logger.d("onDisabled")
+        super.onDisabled(context)
 
-        calculator = null
+        // Enter relevant functionality for when the last widget is disabled
+        Logger.d(hashCode().toString() + " onDisabled")
+
+        repeatingIntent?.let { intent ->
+            alarmManager?.cancel(repeatingIntent)
+        }
+//        calculator = null
     }
 
     override fun onAppWidgetOptionsChanged(
@@ -112,19 +124,19 @@ class AgeAppWidget : AppWidgetProvider() {
     ) {
         super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions)
 
-        Logger.d("onAppWidgetOptionsChanged")
+        Logger.d(hashCode().toString() + " onAppWidgetOptionsChanged")
     }
 
     override fun onDeleted(context: Context?, appWidgetIds: IntArray?) {
         super.onDeleted(context, appWidgetIds)
 
-        Logger.d("onDeleted")
+        Logger.d(hashCode().toString() + " onDeleted")
     }
 
     override fun onRestored(context: Context?, oldWidgetIds: IntArray?, newWidgetIds: IntArray?) {
         super.onRestored(context, oldWidgetIds, newWidgetIds)
 
-        Logger.d("onRestored")
+        Logger.d(hashCode().toString() + " onRestored")
     }
 
     override fun onReceive(context: Context?, intent: Intent?) {
@@ -133,6 +145,7 @@ class AgeAppWidget : AppWidgetProvider() {
         if (context == null) { return }
         if (intent == null) { return }
 
+        /*
         when (intent.action) {
             ACTION_REFRESH_AGE -> {
                 val views = RemoteViews(context.packageName, R.layout.appwidget_age)
@@ -149,10 +162,9 @@ class AgeAppWidget : AppWidgetProvider() {
 
                 appWidgetManager.updateAppWidget(appWidget, views)
             }
-        }
+        }*/
 
     }
-    */
 
     // endregion
 
@@ -160,7 +172,8 @@ class AgeAppWidget : AppWidgetProvider() {
     // region Properties
     // ====================================================================================================
 
-    var service: PendingIntent? = null
+    var alarmManager: AlarmManager? = null
+    var repeatingIntent: PendingIntent? = null
 
     // endregion
 

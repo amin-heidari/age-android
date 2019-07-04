@@ -1,5 +1,6 @@
 package com.aminheidari.age.services
 
+import android.app.PendingIntent
 import android.app.Service
 import android.appwidget.AppWidgetManager
 import android.content.ComponentName
@@ -10,6 +11,7 @@ import android.widget.RemoteViews
 import com.aminheidari.age.R
 import com.aminheidari.age.appwidgets.AgeAppWidget
 import com.aminheidari.age.calculator.AgeCalculator
+import com.aminheidari.age.utils.Logger
 import com.aminheidari.age.utils.PreferencesUtil
 import java.util.*
 
@@ -18,6 +20,12 @@ class AgeService : Service() {
     // ====================================================================================================
     // region Static
     // ====================================================================================================
+
+    companion object {
+
+        private var counter = 0
+
+    }
 
     // endregion
 
@@ -46,10 +54,20 @@ class AgeService : Service() {
 //            }
 //        }
 
-        val view = RemoteViews(packageName, R.layout.appwidget_age)
-        view.setTextViewText(R.id.textView, Random().nextInt().toString())
+        Logger.d(hashCode().toString() + " onStartCommand")
 
-        AppWidgetManager.getInstance(this).updateAppWidget(ComponentName(this, AgeAppWidget::class.java), view)
+        val intent = Intent(this, AgeAppWidget::class.java)
+        intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, AppWidgetManager.getInstance(this).getAppWidgetIds(ComponentName(this, AgeAppWidget::class.java)))
+
+        sendBroadcast(intent)
+
+        counter++
+
+//        val view = RemoteViews(packageName, R.layout.appwidget_age)
+//        view.setTextViewText(R.id.textView, counter.toString())
+//
+//        AppWidgetManager.getInstance(this).updateAppWidget(ComponentName(this, AgeAppWidget::class.java), view)
 
         return super.onStartCommand(intent, flags, startId)
     }

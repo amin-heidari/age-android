@@ -19,5 +19,7 @@
     <string name="error">Error</string>
     <string name="sorry">We are so sorry about that</string>
     <string name="ok">OK</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
 
 </resources>

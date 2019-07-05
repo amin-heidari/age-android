@@ -1,10 +1,12 @@
 package com.aminheidari.age.utils
 
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import com.aminheidari.age.App
 import com.aminheidari.age.config.RemoteConfigManager
 import com.aminheidari.age.models.Birthday
+import com.aminheidari.age.receivers.AgeUpdateReceiver
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -57,6 +59,9 @@ class PreferencesUtil {
                 } else {
                     editor.putString(Keys.DefaultBirthday.name, moshi.adapter(Birthday::class.java).toJson(value)).apply()
                 }
+
+                // Send an update to `AgeUpdateReceiver` to update any existing `AgeAppWidget` instances.
+                App.instance.sendBroadcast(Intent(App.instance.applicationContext, AgeUpdateReceiver::class.java))
             }
 
         /**

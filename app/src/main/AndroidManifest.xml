@@ -12,11 +12,6 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
-        <service
-                android:name=".services.AgeService"
-                android:enabled="true"
-                android:exported="false">
-        </service>
 
         <receiver android:name=".appwidgets.AgeAppWidget">
             <intent-filter>
@@ -28,6 +23,8 @@
                     android:resource="@xml/age_app_widget_info"/>
         </receiver>
 
+        <receiver android:name=".receivers.AgeUpdateReceiver"/>
+
         <activity
                 android:name=".activities.MainActivity"
                 android:screenOrientation="portrait">
@@ -37,6 +34,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

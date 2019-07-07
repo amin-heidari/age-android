@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import com.aminheidari.age.App
 import com.aminheidari.age.config.RemoteConfigManager
+import com.aminheidari.age.models.AppWidgetOverride
 import com.aminheidari.age.models.Birthday
 import com.aminheidari.age.receivers.AgeUpdateReceiver
 import com.squareup.moshi.Moshi
@@ -23,7 +24,8 @@ class PreferencesUtil {
         private enum class Keys {
             DefaultBirthday,
             CachedRemoteConfig,
-            SkippedLatestVersion
+            SkippedLatestVersion,
+            AppWidgetOverride
         }
 
         private val sharedPreferences: SharedPreferences by lazy { App.instance.applicationContext.getSharedPreferences("com.aminheidari.age.prefs", Context.MODE_PRIVATE) }
@@ -94,6 +96,25 @@ class PreferencesUtil {
             get() = sharedPreferences.getString(Keys.SkippedLatestVersion.name, null)
             set(value) {
                 editor.putString(Keys.SkippedLatestVersion.name, value).apply()
+            }
+
+        /**
+         * Whether or not the containing app wants the override the app widget.
+         */
+        var appWidgetOverride: AppWidgetOverride
+            get() {
+                val stringValue = sharedPreferences.getString(Keys.AppWidgetOverride.name, null)
+                return if (stringValue != null) {
+                    return stringValue.deserializeObject() as AppWidgetOverride
+                } else {
+                    AppWidgetOverride.None
+                }
+            }
+            set(value) {
+                editor.putString(Keys.AppWidgetOverride.name, value.serializeToString()).apply()
+
+                // Send an update to `AgeUpdateReceiver` to update any existing `AgeAppWidget` instances.
+                App.instance.sendBroadcast(Intent(App.instance.applicationContext, AgeUpdateReceiver::class.java))
             }
 
         // endregion

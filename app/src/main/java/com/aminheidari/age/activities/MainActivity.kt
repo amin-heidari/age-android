@@ -7,6 +7,7 @@ import android.view.View
 import com.aminheidari.age.R
 import com.aminheidari.age.fragments.BaseFragment
 import com.aminheidari.age.fragments.LoadingFragment
+import com.aminheidari.age.models.AppWidgetOverride
 import com.aminheidari.age.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
 

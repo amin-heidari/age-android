@@ -49,7 +49,7 @@ class AgeAppWidget : AppWidgetProvider() {
         data class UpgradeOverride(
             val storePendingIntent: PendingIntent
         ): Content()
-        data class ConnectionOverride(
+        data class OpenAppOverride(
             val appPendingIntent: PendingIntent
         ): Content()
     }
@@ -95,7 +95,7 @@ class AgeAppWidget : AppWidgetProvider() {
                     remoteViews.setViewVisibility(R.id.refreshButton, View.VISIBLE)
                     remoteViews.setOnClickPendingIntent(R.id.refreshButton, content.manualRefreshPendingIntent)
                 }
-                is Content.ConnectionOverride -> {
+                is Content.OpenAppOverride -> {
                     remoteViews.setOnClickPendingIntent(R.id.rootLayout, content.appPendingIntent)
 
                     remoteViews.setTextViewText(R.id.ageTextView, "Connect!")
@@ -154,7 +154,7 @@ class AgeAppWidget : AppWidgetProvider() {
                 )
             }
             is AppWidgetOverride.OpenApp -> {
-                Content.ConnectionOverride(
+                Content.OpenAppOverride(
                     PendingIntent.getActivity(context, 0, Intent(context, MainActivity::class.java), 0)
                 )
             }

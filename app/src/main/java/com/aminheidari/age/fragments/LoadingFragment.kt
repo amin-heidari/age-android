@@ -121,10 +121,16 @@ class LoadingFragment : BaseFragment() {
                     when (result.data.version.compare(BuildConfig.VERSION_NAME)) {
                         RemoteConfig.Version.CompareResult.ForcedUpgrade -> {
                             // The app's version is below the minimum required version.
+
+                            PreferencesUtil.appWidgetOverride = AppWidgetOverride.Upgrade(result.data.storeUrl)
+
                             showFragment(UpgradeFragment.newInstance(), BackStackBehaviour.Wipe)
                         }
                         RemoteConfig.Version.CompareResult.OptionalUpgrade -> {
                             // The app's version is below the latest version.
+
+                            PreferencesUtil.appWidgetOverride = AppWidgetOverride.None
+
                             val skippedLatestVersion = PreferencesUtil.skippedLatestVersion
                             if (skippedLatestVersion != null && skippedLatestVersion.compareVersionTo(result.data.version.latest) >= 0) {
                                 // User has already skipped to upgrade to that version before.
@@ -135,6 +141,8 @@ class LoadingFragment : BaseFragment() {
                             }
                         }
                         RemoteConfig.Version.CompareResult.LatestVersion -> {
+                            PreferencesUtil.appWidgetOverride = AppWidgetOverride.None
+
                             proceedToTheApp()
                         }
                     }

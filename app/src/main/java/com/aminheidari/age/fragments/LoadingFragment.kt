@@ -8,6 +8,7 @@ import com.aminheidari.age.BuildConfig
 import com.aminheidari.age.R
 import com.aminheidari.age.config.RemoteConfigManager
 import com.aminheidari.age.models.AppException
+import com.aminheidari.age.models.AppWidgetOverride
 import com.aminheidari.age.models.RemoteConfig
 import com.aminheidari.age.utils.*
 import kotlinx.android.synthetic.main.fragment_loading.*
@@ -93,16 +94,24 @@ class LoadingFragment : BaseFragment() {
                             errorTitleTextView.text = "No Internet!"
                             errorDescriptionTextView.text = "It looks like you're not connected to the internet. Please connect and try again!"
                             retryButton.visibility = View.VISIBLE
+
+                            PreferencesUtil.appWidgetOverride = AppWidgetOverride.OpenApp
                         }
                         is AppException.CertificateExpired -> {
                             errorTitleTextView.text = "Please upgrade!"
                             errorDescriptionTextView.text = "Please upgrade the application from the app store!"
                             retryButton.visibility = View.GONE
+
+                            // A bit of a tricky case, but this would suffice for the widget.
+                            // Will simply ask the user to come back to the app to (figure things out) and continue.
+                            PreferencesUtil.appWidgetOverride = AppWidgetOverride.OpenApp
                         }
                         else -> {
                             errorTitleTextView.text = "Error!"
                             errorDescriptionTextView.text = "An error occured, please try again!"
                             retryButton.visibility = View.VISIBLE
+
+                            PreferencesUtil.appWidgetOverride = AppWidgetOverride.OpenApp
                         }
                     }
                 }
@@ -112,10 +121,16 @@ class LoadingFragment : BaseFragment() {
                     when (result.data.version.compare(BuildConfig.VERSION_NAME)) {
                         RemoteConfig.Version.CompareResult.ForcedUpgrade -> {
                             // The app's version is below the minimum required version.
+
+                            PreferencesUtil.appWidgetOverride = AppWidgetOverride.Upgrade(result.data.storeUrl)
+
                             showFragment(UpgradeFragment.newInstance(), BackStackBehaviour.Wipe)
                         }
                         RemoteConfig.Version.CompareResult.OptionalUpgrade -> {
                             // The app's version is below the latest version.
+
+                            PreferencesUtil.appWidgetOverride = AppWidgetOverride.None
+
                             val skippedLatestVersion = PreferencesUtil.skippedLatestVersion
                             if (skippedLatestVersion != null && skippedLatestVersion.compareVersionTo(result.data.version.latest) >= 0) {
                                 // User has already skipped to upgrade to that version before.
@@ -126,6 +141,8 @@ class LoadingFragment : BaseFragment() {
                             }
                         }
                         RemoteConfig.Version.CompareResult.LatestVersion -> {
+                            PreferencesUtil.appWidgetOverride = AppWidgetOverride.None
+
                             proceedToTheApp()
                         }
                     }

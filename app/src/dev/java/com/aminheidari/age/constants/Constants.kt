@@ -20,7 +20,7 @@ object Constants {
         const val freshCacheTime = 1
 
         // Time interval (in seconds) after which the cache expires and a fresh remote config MUST be fetched.
-        const val expireTime = 600
+        const val expireTime = 10
     }
 
     object AgeCalculation {

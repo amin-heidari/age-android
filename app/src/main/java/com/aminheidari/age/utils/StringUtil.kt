@@ -1,5 +1,10 @@
 package com.aminheidari.age.utils
 
+import android.util.Base64
+import java.io.ByteArrayInputStream
+import java.io.ObjectInputStream
+import java.util.*
+
 /**
  * Compares versions.
  * https://stackoverflow.com/a/18699668
@@ -39,4 +44,11 @@ fun String.compareVersionTo(other: String): Int {
     }
 
     return res
+}
+
+fun String.deserializeObject(): Any {
+    val bytes = Base64.decode(this.toByteArray(), 0)
+    val bi = ByteArrayInputStream(bytes)
+    val si = ObjectInputStream(bi)
+    return si.readObject()
 }

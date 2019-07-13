@@ -8,7 +8,22 @@ import retrofit2.Response
 import java.net.UnknownHostException
 import javax.net.ssl.SSLPeerUnverifiedException
 
+typealias FullHttpResponse<T> = Pair<T, Response<T>>
+
 fun <T>retrofitCallback(completion: Completion<T>): Callback<T> {
+    return retrofitFullCallback { result ->
+        when(result) {
+            is Either.Failure -> {
+                completion(Either.Failure(result.exception))
+            }
+            is Either.Success -> {
+                completion(Either.Success(result.data.first))
+            }
+        }
+    }
+}
+
+fun <T>retrofitFullCallback(completion: Completion<FullHttpResponse<T>>): Callback<T> {
     return object : Callback<T> {
         override fun onFailure(call: Call<T>, t: Throwable) {
             when (t) {
@@ -28,7 +43,7 @@ fun <T>retrofitCallback(completion: Completion<T>): Callback<T> {
             if ((200..299).contains(response.code())) {
                 val body = response.body()
                 if (body != null) {
-                    completion(Either.Success(body))
+                    completion(Either.Success(FullHttpResponse(body, response)))
                 } else {
                     completion(Either.Failure(AppException.Parsing()))
                 }

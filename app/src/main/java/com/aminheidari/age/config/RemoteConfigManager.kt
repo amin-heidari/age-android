@@ -16,6 +16,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import java.util.*
+import kotlin.math.abs
 
 object RemoteConfigManager {
 
@@ -60,7 +61,7 @@ object RemoteConfigManager {
         } else {
             // There either isn't a cache, or if there is one, it's not fresh. So try to make the api call.
             val call = apiClient.getRemoteConfig()
-            call.enqueue(retrofitCallback { result ->
+            call.enqueue(retrofitFullCallback { result ->
                 when(result) {
                     is Either.Failure -> {
                         when (result.exception) {
@@ -78,9 +79,26 @@ object RemoteConfigManager {
                         }
                     }
                     is Either.Success -> {
-                        // Update the cache.
-                        cachedRemoteConfig = CachedRemoteConfig(result.data, Calendar.getInstance().time)
-                        completion(Either.Success(result.data))
+                        // Success block to execute.
+                        val completeSuccess = {
+                            // Update the cache.
+                            cachedRemoteConfig = CachedRemoteConfig(result.data.data, Calendar.getInstance().time)
+                            completion(Either.Success(result.data.data))
+                        }
+
+                        // Check if the response has a header named `Date`,
+                        // and use it to make sure the server time and client time are in sync (and throw an error otherwise).
+                        val apiDate = result.data.response.headers().getDate("date")
+                        if (apiDate != null) {
+                            // There is a date coming back from the api, use to to validate the integrity of the time on the device.
+                            if (abs(Calendar.getInstance().time.time - apiDate.time) > Constants.DeviceIntegrity.maxAllowedApiTimeDifference) {
+                                completion(Either.Failure(AppException.IncorrectDeviceDateTime))
+                            } else {
+                                completeSuccess()
+                            }
+                        } else {
+                            completeSuccess()
+                        }
                     }
                 }
             })

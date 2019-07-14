@@ -28,4 +28,9 @@ object Constants {
         const val refreshInterval: Long = 10
     }
 
+    object DeviceIntegrity {
+        // Maximum time the device is allowed to have a time diff from the api (miliseconds).
+        const val maxAllowedApiTimeDifference: Long = 10 * 60 * 1000
+    }
+
 }

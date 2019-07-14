@@ -22,12 +22,10 @@ data class RemoteConfig(
         }
 
         fun compare(appVersion: String): CompareResult {
-            return if (appVersion.compareVersionTo(minimum) < 0) {
-                CompareResult.ForcedUpgrade
-            } else if (appVersion.compareVersionTo(latest) < 0) {
-                CompareResult.OptionalUpgrade
-            } else {
-                CompareResult.LatestVersion
+            return when {
+                appVersion.compareVersionTo(minimum) < 0 -> CompareResult.ForcedUpgrade
+                appVersion.compareVersionTo(latest) < 0 -> CompareResult.OptionalUpgrade
+                else -> CompareResult.LatestVersion
             }
         }
 

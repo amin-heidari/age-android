@@ -6,6 +6,8 @@ import androidx.fragment.app.FragmentManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
 import com.aminheidari.age.R
+import com.aminheidari.age.activities.MainActivity
+import com.vanniktech.rxbilling.RxBilling
 import java.lang.IllegalStateException
 
 /**
@@ -87,4 +89,7 @@ fun Activity.popBackStack() {
 
     supportFragmentManager.popBackStack()
 }
+
+val Activity.rxBilling: RxBilling?
+    get() = (this as? MainActivity)?.rxBilling
 

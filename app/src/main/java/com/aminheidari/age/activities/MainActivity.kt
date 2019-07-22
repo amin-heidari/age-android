@@ -9,6 +9,8 @@ import com.aminheidari.age.fragments.BaseFragment
 import com.aminheidari.age.fragments.LoadingFragment
 import com.aminheidari.age.models.AppWidgetOverride
 import com.aminheidari.age.utils.*
+import com.vanniktech.rxbilling.RxBilling
+import com.vanniktech.rxbilling.google.play.library.RxBillingGooglePlayLibrary
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -29,6 +31,9 @@ class MainActivity : AppCompatActivity() {
     // region API
     // ====================================================================================================
 
+    val rxBilling: RxBilling?
+        get() = _rxBilling
+
     // endregion
 
     // ====================================================================================================
@@ -40,6 +45,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         showFragment(LoadingFragment.newInstance(), BackStackBehaviour.None, TransactionAnimation.None)
+
+        _rxBilling = RxBillingGooglePlayLibrary(this)
     }
 
     override fun onBackPressed() {
@@ -63,6 +70,12 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+
+        _rxBilling?.destroy()
+    }
+
     // endregion
 
     // ====================================================================================================
@@ -71,6 +84,8 @@ class MainActivity : AppCompatActivity() {
 
     private val topBaseFragment: BaseFragment?
         get() = supportFragmentManager.fragments.lastOrNull { it is BaseFragment } as? BaseFragment
+
+    private var _rxBilling: RxBilling? = null
 
     // endregion
 

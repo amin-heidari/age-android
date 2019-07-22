@@ -1,5 +1,6 @@
 package com.aminheidari.age.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import androidx.fragment.app.Fragment
@@ -9,10 +10,8 @@ import android.view.ViewGroup
 import com.aminheidari.age.R
 import com.aminheidari.age.calculator.AgeCalculator
 import com.aminheidari.age.constants.Constants
-import com.aminheidari.age.utils.AppExecutors
-import com.aminheidari.age.utils.BackStackBehaviour
-import com.aminheidari.age.utils.PreferencesUtil
-import com.aminheidari.age.utils.showFragment
+import com.aminheidari.age.utils.*
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_age.*
 
 class AgeFragment : BaseFragment() {
@@ -48,6 +47,7 @@ class AgeFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_age, container, false)
     }
 
+    @SuppressLint("CheckResult")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -62,6 +62,25 @@ class AgeFragment : BaseFragment() {
         super.onStart()
 
         ageCalculator = AgeCalculator(PreferencesUtil.defaultBirthday!!.birthDate)
+
+        // If the app is already purchased, then don't do anything.
+        // Otherwise, query the status of the in app purchase and proceed accordingly.
+        isBillingForInAppSupportedDisposable = rxBilling?.isBillingForInAppSupported?.subscribe {
+            if (isVisible) {
+                isBillingForInAppSupportedDisposable?.dispose()
+
+                queryInAppPurchasesDisposable = rxBilling?.queryInAppPurchases(Constants.Billing.multipleAgesId)?.subscribe { inventoryInApp ->
+                    if (isVisible) {
+                        // We can safely dispose here since only a single in app purchase we polled above.
+                        queryInAppPurchasesDisposable?.dispose()
+
+                        if (inventoryInApp.sku() == Constants.Billing.multipleAgesId) {
+                            agesButton.visibility = View.VISIBLE
+                        }
+                    }
+                }
+            }
+        }
     }
 
     override fun onResume() {
@@ -74,6 +93,9 @@ class AgeFragment : BaseFragment() {
         super.onStop()
 
         ageCalculator = null
+
+        isBillingForInAppSupportedDisposable?.dispose()
+        queryInAppPurchasesDisposable?.dispose()
     }
 
     // endregion
@@ -83,6 +105,9 @@ class AgeFragment : BaseFragment() {
     // ====================================================================================================
 
     private var ageCalculator: AgeCalculator? = null
+
+    private var isBillingForInAppSupportedDisposable: Disposable? = null
+    private var queryInAppPurchasesDisposable: Disposable? = null
 
     // endregion
 

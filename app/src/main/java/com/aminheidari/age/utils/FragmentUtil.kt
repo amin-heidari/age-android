@@ -1,6 +1,7 @@
 package com.aminheidari.age.utils
 
 import androidx.fragment.app.Fragment
+import com.vanniktech.rxbilling.RxBilling
 
 const val INPUT = "INPUT"
 const val RESULT = "RESULT"
@@ -16,3 +17,6 @@ fun Fragment.showFragment(
 fun Fragment.popBackstack() {
     activity?.popBackStack()
 }
+
+val Fragment.rxBilling: RxBilling?
+    get() = activity?.rxBilling

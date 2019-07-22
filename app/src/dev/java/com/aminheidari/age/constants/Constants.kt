@@ -33,4 +33,8 @@ object Constants {
         const val maxAllowedApiTimeDifference: Long = 10 * 60 * 1000
     }
 
+    object Billing {
+        const val multipleAgesId = "multiple_ages"
+    }
+
 }

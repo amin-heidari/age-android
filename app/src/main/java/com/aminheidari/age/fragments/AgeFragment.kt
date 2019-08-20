@@ -65,22 +65,36 @@ class AgeFragment : BaseFragment() {
 
         // If the app is already purchased, then don't do anything.
         // Otherwise, query the status of the in app purchase and proceed accordingly.
-        isBillingForInAppSupportedDisposable = rxBilling?.isBillingForInAppSupported?.subscribe {
-            if (isVisible) {
-                isBillingForInAppSupportedDisposable?.dispose()
+        isBillingForInAppSupportedDisposable = rxBilling?.isBillingForInAppSupported?.
+            subscribe({
+                // According to the docs, if it completes (i.e. if we're here), then the in app billing is supported.
+                if (isVisible) {
+                    isBillingForInAppSupportedDisposable?.dispose()
 
-                queryInAppPurchasesDisposable = rxBilling?.queryInAppPurchases(Constants.Billing.multipleAgesId)?.subscribe { inventoryInApp ->
-                    if (isVisible) {
-                        // We can safely dispose here since only a single in app purchase we polled above.
-                        queryInAppPurchasesDisposable?.dispose()
+                    val queryInAppPurchases = rxBilling?.queryInAppPurchases(Constants.Billing.multipleAgesId)
+                    queryInAppPurchases?.let { query ->
+                        queryInAppPurchasesDisposable = query.subscribe({inventoryInApp ->
+                            /* Individual items. */
+                            if (isVisible) {
+                                // Check if it's our desired in app purchase.
+                                if (inventoryInApp.sku() == Constants.Billing.multipleAgesId) {
+                                    // Update UI.
+                                    agesButton.visibility = View.VISIBLE
 
-                        if (inventoryInApp.sku() == Constants.Billing.multipleAgesId) {
-                            agesButton.visibility = View.VISIBLE
-                        }
+                                    // We don't need further updates from this point on since we have a single in app purchase at the moment.
+                                    queryInAppPurchasesDisposable?.dispose()
+                                }
+                            }
+                        }, {
+                            /* Error handling. */
+                        }, {
+                            /* Completed */
+                        })
                     }
                 }
-            }
-        }
+            }, {
+                /* Error handling. */
+            })
     }
 
     override fun onResume() {

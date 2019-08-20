@@ -11,6 +11,7 @@ import com.aminheidari.age.R
 import com.aminheidari.age.calculator.AgeCalculator
 import com.aminheidari.age.constants.Constants
 import com.aminheidari.age.utils.*
+import com.vanniktech.rxbilling.RxBilling
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_age.*
 
@@ -64,37 +65,52 @@ class AgeFragment : BaseFragment() {
         ageCalculator = AgeCalculator(PreferencesUtil.defaultBirthday!!.birthDate)
 
         // If the app is already purchased, then don't do anything.
-        // Otherwise, query the status of the in app purchase and proceed accordingly.
-        isBillingForInAppSupportedDisposable = rxBilling?.isBillingForInAppSupported?.
-            subscribe({
-                // According to the docs, if it completes (i.e. if we're here), then the in app billing is supported.
-                if (isVisible) {
-                    isBillingForInAppSupportedDisposable?.dispose()
+        // Note that for a regular app we'll always set up store connections and utils. But here we have a single non-consumable IAP so making it simpler.
+        if (PreferencesUtil.multipleAgesPurchaseToken == null) {
+            // Update UI.
+            agesButton.visibility = View.VISIBLE
+        } else {
+            // Otherwise, query the status of the in app purchase and proceed accordingly.
+            val isBillingForInAppSupported = rxBilling?.isBillingForInAppSupported
+            if (isBillingForInAppSupported != null) {
+                isBillingForInAppSupportedDisposable = isBillingForInAppSupported.subscribe({
+                    // According to the docs, if it completes (i.e. if we're here), then the in app billing is supported.
+                    if (isVisible) {
+                        // Dispose it.
+                        isBillingForInAppSupportedDisposable?.dispose()
 
-                    val queryInAppPurchases = rxBilling?.queryInAppPurchases(Constants.Billing.multipleAgesId)
-                    queryInAppPurchases?.let { query ->
-                        queryInAppPurchasesDisposable = query.subscribe({inventoryInApp ->
-                            /* Individual items. */
-                            if (isVisible) {
-                                // Check if it's our desired in app purchase.
-                                if (inventoryInApp.sku() == Constants.Billing.multipleAgesId) {
-                                    // Update UI.
-                                    agesButton.visibility = View.VISIBLE
+                        val queryInAppPurchases = rxBilling?.queryInAppPurchases(Constants.Billing.multipleAgesId)
+                        if (queryInAppPurchases != null) {
+                            queryInAppPurchasesDisposable = queryInAppPurchases.subscribe({ inventoryInApp ->
+                                /* Individual items. */
+                                if (isVisible) {
+                                    // Check if it's our desired in app purchase.
+                                    if (inventoryInApp.sku() == Constants.Billing.multipleAgesId) {
+                                        // We don't need further updates from this point on since we have a single in app purchase at the moment.
+                                        queryInAppPurchasesDisposable?.dispose()
 
-                                    // We don't need further updates from this point on since we have a single in app purchase at the moment.
-                                    queryInAppPurchasesDisposable?.dispose()
+                                        // Update UI.
+                                        agesButton.visibility = View.VISIBLE
+                                    }
                                 }
-                            }
-                        }, {
-                            /* Error handling. */
-                        }, {
-                            /* Completed */
-                        })
+                            }, {
+                                // Possible Error handling.
+                            }, {
+                                // Completed.
+                                // Debugging shows that it's disposed at this point. But it doesn't hurt.
+                                queryInAppPurchasesDisposable?.dispose()
+                            })
+                        } else {
+                            // Possible error handling logic.
+                        }
                     }
-                }
-            }, {
-                /* Error handling. */
-            })
+                }, {
+                    // Possible Error handling.
+                })
+            } else {
+                // Possible error handling logic.
+            }
+        }
     }
 
     override fun onResume() {
@@ -110,6 +126,7 @@ class AgeFragment : BaseFragment() {
 
         isBillingForInAppSupportedDisposable?.dispose()
         queryInAppPurchasesDisposable?.dispose()
+        purchasedInAppsDisposable?.dispose()
     }
 
     // endregion
@@ -122,6 +139,7 @@ class AgeFragment : BaseFragment() {
 
     private var isBillingForInAppSupportedDisposable: Disposable? = null
     private var queryInAppPurchasesDisposable: Disposable? = null
+    private var purchasedInAppsDisposable: Disposable? = null
 
     // endregion
 

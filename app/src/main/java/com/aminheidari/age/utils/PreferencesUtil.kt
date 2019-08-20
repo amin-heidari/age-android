@@ -25,7 +25,9 @@ class PreferencesUtil {
             DefaultBirthday,
             CachedRemoteConfig,
             SkippedLatestVersion,
-            AppWidgetOverride
+            AppWidgetOverride,
+            MultipleAgesPurchaseToken,
+            CachedMonitorRate // Hash for `MultipleAgesPurchaseToken`
         }
 
         private val sharedPreferences: SharedPreferences by lazy { App.instance.applicationContext.getSharedPreferences("com.aminheidari.age.prefs", Context.MODE_PRIVATE) }
@@ -115,6 +117,14 @@ class PreferencesUtil {
 
                 // Send an update to `AgeUpdateReceiver` to update any existing `AgeAppWidget` instances.
                 App.instance.sendBroadcast(Intent(App.instance.applicationContext, AgeUpdateReceiver::class.java))
+            }
+
+        var multipleAgesPurchaseToken: String?
+            get() {
+                return "Amin"
+            }
+            set(value) {
+                //
             }
 
         // endregion

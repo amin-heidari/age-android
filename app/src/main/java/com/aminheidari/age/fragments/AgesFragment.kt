@@ -170,7 +170,14 @@ class AgesFragment : BaseFragment(), OnItemSelectedListener<AgesAdapter.Item> {
                 showFragment(NewAgeFragment.newInstance(NewAgeFragment.Scenario.EditEntity(item.birthdayEntity), this), BackStackBehaviour.Add, TransactionAnimation.PresentBottom)
             }
             is AgesAdapter.Item.AddAge -> {
-                showFragment(NewAgeFragment.newInstance(NewAgeFragment.Scenario.NewEntity, this), BackStackBehaviour.Add, TransactionAnimation.PresentBottom)
+                if (PreferencesUtil.multipleAgesPurchaseToken != null) {
+                    showFragment(NewAgeFragment.newInstance(NewAgeFragment.Scenario.NewEntity, this), BackStackBehaviour.Add, TransactionAnimation.PresentBottom)
+                } else {
+                    // If `multipleAgesPurchaseToken` is not set, that means either the product has not been purchased,
+                    // Or (in an unlucky offline app scenario) our attempt to restore it has not succeded on the MainActivity.
+                    // In either scenario, we'll present the user the option to purchase/restore it.
+                    showFragment(MultipleAgesPromoFragment.newInstance(), BackStackBehaviour.Add, TransactionAnimation.PresentBottom)
+                }
             }
         }
     }

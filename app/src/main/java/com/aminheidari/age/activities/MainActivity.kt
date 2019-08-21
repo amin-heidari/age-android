@@ -89,8 +89,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDetachedFromWindow() {
+        super.onDetachedFromWindow()
 
         purchasedInAppsDisposable?.dispose()
     }

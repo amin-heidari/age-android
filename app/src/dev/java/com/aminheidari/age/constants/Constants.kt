@@ -17,10 +17,12 @@ object Constants {
         const val apiKeyHeaderValue = "cCZA3IPS2K6R6tTzaRJrK3wVzinwogXk3A0nim8K"
 
         // Time interval (in seconds) during which the cache will be used rather than making a new api call.
+        // If this is lower than the life time of a single application process, then we'll have a re-fetch of the config on each app launch.
         const val freshCacheTime = 1
 
         // Time interval (in seconds) after which the cache expires and a fresh remote config MUST be fetched.
-        const val expireTime = 10
+        // Note that, since we don't do a re-fetch in the same app session, this must be much longer than an application process lifetime (in the order of hours if not days).
+        const val expireTime = 60 * 10
     }
 
     object AgeCalculation {
@@ -31,6 +33,12 @@ object Constants {
     object DeviceIntegrity {
         // Maximum time the device is allowed to have a time diff from the api (miliseconds).
         const val maxAllowedApiTimeDifference: Long = 10 * 60 * 1000
+
+        const val hashSaltString = "Kfu6myLk2f79cKVA6fOs3xV67c1plcCh"
+    }
+
+    object Billing {
+        const val multipleAgesId = "multiple_ages"
     }
 
 }

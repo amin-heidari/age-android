@@ -1,5 +1,6 @@
 package com.aminheidari.age.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.os.Handler
 import androidx.fragment.app.Fragment
@@ -9,10 +10,9 @@ import android.view.ViewGroup
 import com.aminheidari.age.R
 import com.aminheidari.age.calculator.AgeCalculator
 import com.aminheidari.age.constants.Constants
-import com.aminheidari.age.utils.AppExecutors
-import com.aminheidari.age.utils.BackStackBehaviour
-import com.aminheidari.age.utils.PreferencesUtil
-import com.aminheidari.age.utils.showFragment
+import com.aminheidari.age.utils.*
+import com.vanniktech.rxbilling.RxBilling
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_age.*
 
 class AgeFragment : BaseFragment() {
@@ -48,6 +48,7 @@ class AgeFragment : BaseFragment() {
         return inflater.inflate(R.layout.fragment_age, container, false)
     }
 
+    @SuppressLint("CheckResult")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -62,6 +63,54 @@ class AgeFragment : BaseFragment() {
         super.onStart()
 
         ageCalculator = AgeCalculator(PreferencesUtil.defaultBirthday!!.birthDate)
+
+        // If the app is already purchased, then don't do anything.
+        // Note that for a regular app we'll always set up store connections and utils. But here we have a single non-consumable IAP so making it simpler.
+        if (PreferencesUtil.multipleAgesPurchaseToken == null) {
+            // Update UI.
+            agesButton.visibility = View.VISIBLE
+        } else {
+            // Otherwise, query the status of the in app purchase and proceed accordingly.
+            val isBillingForInAppSupported = rxBilling?.isBillingForInAppSupported
+            if (isBillingForInAppSupported != null) {
+                isBillingForInAppSupportedDisposable = isBillingForInAppSupported.subscribe({
+                    // According to the docs, if it completes (i.e. if we're here), then the in app billing is supported.
+                    if (isAtLeastStarted) {
+                        // Dispose it.
+                        isBillingForInAppSupportedDisposable?.dispose()
+
+                        val queryInAppPurchases = rxBilling?.queryInAppPurchases(Constants.Billing.multipleAgesId)
+                        if (queryInAppPurchases != null) {
+                            queryInAppPurchasesDisposable = queryInAppPurchases.subscribe({ inventoryInApp ->
+                                // Individual items.
+                                if (isAtLeastStarted) {
+                                    // Check if it's our desired in app purchase.
+                                    if (inventoryInApp.sku() == Constants.Billing.multipleAgesId) {
+                                        // We don't need further updates from this point on since we have a single in app purchase at the moment.
+                                        queryInAppPurchasesDisposable?.dispose()
+
+                                        // Update UI.
+                                        agesButton.visibility = View.VISIBLE
+                                    }
+                                }
+                            }, {
+                                // Possible Error handling.
+                            }, {
+                                // Completed.
+                                // Debugging shows that it's disposed at this point. But it doesn't hurt.
+                                queryInAppPurchasesDisposable?.dispose()
+                            })
+                        } else {
+                            // Possible error handling logic.
+                        }
+                    }
+                }, {
+                    // Possible Error handling.
+                })
+            } else {
+                // Possible error handling logic.
+            }
+        }
     }
 
     override fun onResume() {
@@ -74,6 +123,9 @@ class AgeFragment : BaseFragment() {
         super.onStop()
 
         ageCalculator = null
+
+        isBillingForInAppSupportedDisposable?.dispose()
+        queryInAppPurchasesDisposable?.dispose()
     }
 
     // endregion
@@ -83,6 +135,9 @@ class AgeFragment : BaseFragment() {
     // ====================================================================================================
 
     private var ageCalculator: AgeCalculator? = null
+
+    private var isBillingForInAppSupportedDisposable: Disposable? = null
+    private var queryInAppPurchasesDisposable: Disposable? = null
 
     // endregion
 

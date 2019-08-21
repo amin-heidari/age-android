@@ -5,7 +5,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentTransaction
+import androidx.lifecycle.Lifecycle
 import com.aminheidari.age.R
+import com.aminheidari.age.activities.MainActivity
+import com.vanniktech.rxbilling.RxBilling
 import java.lang.IllegalStateException
 
 /**
@@ -88,3 +91,14 @@ fun Activity.popBackStack() {
     supportFragmentManager.popBackStack()
 }
 
+val Activity.rxBilling: RxBilling?
+    get() = (this as? MainActivity)?.rxBilling
+
+val AppCompatActivity.isAtLeastCreated: Boolean
+    get() = lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)
+
+val AppCompatActivity.isAtLeastStarted: Boolean
+    get() = lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)
+
+val AppCompatActivity.isAtLeastResumed: Boolean
+    get() = lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)

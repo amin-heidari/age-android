@@ -13,7 +13,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:layout_margin="20dp"
-            android:text="Ages"/>
+            android:text="Ages"
+            android:visibility="gone"/>
 
     <TextView
             android:id="@+id/ageTextView"

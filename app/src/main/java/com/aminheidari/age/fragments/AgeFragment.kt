@@ -75,7 +75,7 @@ class AgeFragment : BaseFragment() {
             if (isBillingForInAppSupported != null) {
                 isBillingForInAppSupportedDisposable = isBillingForInAppSupported.subscribe({
                     // According to the docs, if it completes (i.e. if we're here), then the in app billing is supported.
-                    if (isVisible) {
+                    if (isAtLeastStarted) {
                         // Dispose it.
                         isBillingForInAppSupportedDisposable?.dispose()
 
@@ -83,7 +83,7 @@ class AgeFragment : BaseFragment() {
                         if (queryInAppPurchases != null) {
                             queryInAppPurchasesDisposable = queryInAppPurchases.subscribe({ inventoryInApp ->
                                 // Individual items.
-                                if (isVisible) {
+                                if (isAtLeastStarted) {
                                     // Check if it's our desired in app purchase.
                                     if (inventoryInApp.sku() == Constants.Billing.multipleAgesId) {
                                         // We don't need further updates from this point on since we have a single in app purchase at the moment.

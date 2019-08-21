@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import com.aminheidari.age.R
 import com.aminheidari.age.constants.Constants
 import com.aminheidari.age.utils.PreferencesUtil
+import com.aminheidari.age.utils.isAtLeastCreated
 import com.aminheidari.age.utils.rxBilling
 import com.vanniktech.rxbilling.PurchasedInApp
 import com.vanniktech.rxbilling.RxBilling
@@ -182,7 +183,7 @@ class MultipleAgesPromoFragment : BaseFragment() {
         if (currentRxBilling != null) {
             purchasedInAppsDisposable = currentRxBilling.purchasedInApps.subscribe({ purchasedInApp ->
                 // Individual items.
-                if (!isDetached) {
+                if (isAtLeastCreated) {
                     // Check if it's our desired in app purchase.
                     if (purchasedInApp.productId() == Constants.Billing.multipleAgesId) {
                         multipleAgesPurhcasedInApp = purchasedInApp

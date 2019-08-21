@@ -82,7 +82,7 @@ class AgeFragment : BaseFragment() {
                         val queryInAppPurchases = rxBilling?.queryInAppPurchases(Constants.Billing.multipleAgesId)
                         if (queryInAppPurchases != null) {
                             queryInAppPurchasesDisposable = queryInAppPurchases.subscribe({ inventoryInApp ->
-                                /* Individual items. */
+                                // Individual items.
                                 if (isVisible) {
                                     // Check if it's our desired in app purchase.
                                     if (inventoryInApp.sku() == Constants.Billing.multipleAgesId) {
@@ -126,7 +126,6 @@ class AgeFragment : BaseFragment() {
 
         isBillingForInAppSupportedDisposable?.dispose()
         queryInAppPurchasesDisposable?.dispose()
-        purchasedInAppsDisposable?.dispose()
     }
 
     // endregion
@@ -139,7 +138,6 @@ class AgeFragment : BaseFragment() {
 
     private var isBillingForInAppSupportedDisposable: Disposable? = null
     private var queryInAppPurchasesDisposable: Disposable? = null
-    private var purchasedInAppsDisposable: Disposable? = null
 
     // endregion
 

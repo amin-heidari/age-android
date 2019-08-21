@@ -120,6 +120,7 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
 
         _rxBilling?.destroy()
+        _rxBilling = null
     }
 
     // endregion

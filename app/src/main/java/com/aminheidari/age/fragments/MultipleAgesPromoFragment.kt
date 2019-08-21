@@ -13,6 +13,7 @@ import com.vanniktech.rxbilling.PurchasedInApp
 import com.vanniktech.rxbilling.RxBilling
 import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.fragment_multiple_ages_promo.*
+import kotlin.properties.Delegates
 
 /**
  * A simple [Fragment] subclass.
@@ -89,13 +90,15 @@ class MultipleAgesPromoFragment : BaseFragment() {
     private var queryInAppPurchasesDisposable: Disposable? = null
     private var purchasedInAppsDisposable: Disposable? = null
 
-    private val isProcessing: Boolean
-        get() {
-            if (purchaseDisposable?.isDisposed == false) { return true }
-            if (queryInAppPurchasesDisposable?.isDisposed == false) { return true }
-            if (purchasedInAppsDisposable?.isDisposed == false) { return true }
-            return false
+    private var isProcessing: Boolean by Delegates.observable(false, { _, _, newValue ->
+        if (newValue) {
+            progressBar.visibility = View.VISIBLE
+            contentLayout.visibility = View.GONE
+        } else {
+            progressBar.visibility = View.GONE
+            contentLayout.visibility = View.VISIBLE
         }
+    })
 
     // endregion
 
@@ -108,7 +111,13 @@ class MultipleAgesPromoFragment : BaseFragment() {
      * Can update and enhance this later.
      */
     private fun presentError() {
+        /*
+        Now here,
+        If we wanna let the user stay on the page after we show error
+        Then I'll need to reset `isProcessing`
 
+        Otherwise, all good (once isPrcessing is set, it's set for good).
+         */
     }
 
     private fun successWrapUp() {
@@ -122,6 +131,8 @@ class MultipleAgesPromoFragment : BaseFragment() {
     // ====================================================================================================
 
     private val buyButtonOnClickListener = View.OnClickListener {
+        isProcessing = true
+
         val currentRxBilling = rxBilling
         if (currentRxBilling != null) {
             queryInAppPurchasesDisposable = currentRxBilling.queryInAppPurchases(Constants.Billing.multipleAgesId).subscribe({ inventoryInApp ->
@@ -158,11 +169,7 @@ class MultipleAgesPromoFragment : BaseFragment() {
                 // Completed.
                 // Debugging shows that it's disposed at this point. But it doesn't hurt.
                 queryInAppPurchasesDisposable?.dispose()
-
-                updateProcessingUI()
             })
-
-            updateProcessingUI()
         } else {
             presentError()
         }
@@ -207,24 +214,10 @@ class MultipleAgesPromoFragment : BaseFragment() {
                 // Therefore that's also a restore error.
                 if (multipleAgesPurhcasedInApp == null) {
                     presentError()
-                } else {
-                    updateProcessingUI()
                 }
             })
-
-            updateProcessingUI()
         } else {
             presentError()
-        }
-    }
-
-    private fun updateProcessingUI() {
-        if (isProcessing) {
-            progressBar.visibility = View.VISIBLE
-            contentLayout.visibility = View.GONE
-        } else {
-            progressBar.visibility = View.GONE
-            contentLayout.visibility = View.VISIBLE
         }
     }
 

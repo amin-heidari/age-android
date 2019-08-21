@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import com.aminheidari.age.App
 import com.aminheidari.age.config.RemoteConfigManager
+import com.aminheidari.age.constants.Constants
 import com.aminheidari.age.models.AppWidgetOverride
 import com.aminheidari.age.models.Birthday
 import com.aminheidari.age.receivers.AgeUpdateReceiver
@@ -21,7 +22,7 @@ class PreferencesUtil {
         // region Constants/Types
         // ====================================================================================================
 
-        private enum class Keys {
+        private enum class Key {
             DefaultBirthday,
             CachedRemoteConfig,
             SkippedLatestVersion,
@@ -50,7 +51,7 @@ class PreferencesUtil {
 
         var defaultBirthday: Birthday?
             get() {
-                val stringValue = sharedPreferences.getString(Keys.DefaultBirthday.name, null)
+                val stringValue = sharedPreferences.getString(Key.DefaultBirthday.name, null)
                 return if (stringValue != null) {
                     return moshi.adapter(Birthday::class.java).fromJson(stringValue)
                 } else {
@@ -59,9 +60,9 @@ class PreferencesUtil {
             }
             set(value) {
                 if (value == null) {
-                    editor.remove(Keys.DefaultBirthday.name).apply()
+                    editor.remove(Key.DefaultBirthday.name).apply()
                 } else {
-                    editor.putString(Keys.DefaultBirthday.name, moshi.adapter(Birthday::class.java).toJson(value)).apply()
+                    editor.putString(Key.DefaultBirthday.name, moshi.adapter(Birthday::class.java).toJson(value)).apply()
                 }
 
                 // Send an update to `AgeUpdateReceiver` to update any existing `AgeAppWidget` instances.
@@ -73,7 +74,7 @@ class PreferencesUtil {
          */
         var cachedRemoteConfig: RemoteConfigManager.CachedRemoteConfig?
             get() {
-                val stringValue = sharedPreferences.getString(Keys.CachedRemoteConfig.name, null)
+                val stringValue = sharedPreferences.getString(Key.CachedRemoteConfig.name, null)
                 return if (stringValue != null) {
                     return moshi.adapter(RemoteConfigManager.CachedRemoteConfig::class.java).fromJson(stringValue)
                 } else {
@@ -82,9 +83,9 @@ class PreferencesUtil {
             }
             set(value) {
                 if (value == null) {
-                    editor.remove(Keys.CachedRemoteConfig.name).apply()
+                    editor.remove(Key.CachedRemoteConfig.name).apply()
                 } else {
-                    editor.putString(Keys.CachedRemoteConfig.name, moshi.adapter(RemoteConfigManager.CachedRemoteConfig::class.java).toJson(value)).apply()
+                    editor.putString(Key.CachedRemoteConfig.name, moshi.adapter(RemoteConfigManager.CachedRemoteConfig::class.java).toJson(value)).apply()
                 }
             }
 
@@ -95,9 +96,9 @@ class PreferencesUtil {
          * then we'll know that we haven't presented that to the user yet.
          */
         var skippedLatestVersion: String?
-            get() = sharedPreferences.getString(Keys.SkippedLatestVersion.name, null)
+            get() = sharedPreferences.getString(Key.SkippedLatestVersion.name, null)
             set(value) {
-                editor.putString(Keys.SkippedLatestVersion.name, value).apply()
+                editor.putString(Key.SkippedLatestVersion.name, value).apply()
             }
 
         /**
@@ -105,7 +106,7 @@ class PreferencesUtil {
          */
         var appWidgetOverride: AppWidgetOverride
             get() {
-                val stringValue = sharedPreferences.getString(Keys.AppWidgetOverride.name, null)
+                val stringValue = sharedPreferences.getString(Key.AppWidgetOverride.name, null)
                 return if (stringValue != null) {
                     return stringValue.deserializeObject() as AppWidgetOverride
                 } else {
@@ -113,19 +114,53 @@ class PreferencesUtil {
                 }
             }
             set(value) {
-                editor.putString(Keys.AppWidgetOverride.name, value.serializeToString()).apply()
+                editor.putString(Key.AppWidgetOverride.name, value.serializeToString()).apply()
 
                 // Send an update to `AgeUpdateReceiver` to update any existing `AgeAppWidget` instances.
                 App.instance.sendBroadcast(Intent(App.instance.applicationContext, AgeUpdateReceiver::class.java))
             }
 
         var multipleAgesPurchaseToken: String?
-            get() {
-                return "Amin"
-            }
+            get() = getProtectedString(Companion.Key.MultipleAgesPurchaseToken, Companion.Key.CachedMonitorRate, null)
             set(value) {
-                //
+                setProtectedString(Companion.Key.MultipleAgesPurchaseToken, Companion.Key.CachedMonitorRate, value)
             }
+
+        // endregion
+
+        // ====================================================================================================
+        // region Methods
+        // ====================================================================================================
+
+        private fun getProtectedString(originalKey: Key, hashKey: Key, defaultValue: String?): String? {
+            val value = sharedPreferences.getString(originalKey.name, null)
+            return if (value != null) {
+                if (saltHash(value) == sharedPreferences.getString(hashKey.name, null)) {
+                    value
+                } else {
+                    editor.putString(null, originalKey.name).apply()
+                    editor.putString(null, hashKey.name).apply()
+                    null
+                }
+            } else {
+                null
+            }
+        }
+
+        private fun setProtectedString(originalKey: Key, hashKey: Key, value: String?) {
+            if (value != null) {
+                // Persist the data and its hash.
+                editor.putString(value, originalKey.name).apply()
+                editor.putString(saltHash(value), hashKey.name).apply()
+            } else {
+                editor.putString(null, originalKey.name).apply()
+                editor.putString(null, hashKey.name).apply()
+            }
+        }
+
+        private fun saltHash(string: String): String {
+            return String.format("%s%s", string, Constants.DeviceIntegrity.hashSaltString).toByteArray().sha512.raw
+        }
 
         // endregion
 

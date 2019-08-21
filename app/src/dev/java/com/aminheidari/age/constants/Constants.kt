@@ -31,6 +31,8 @@ object Constants {
     object DeviceIntegrity {
         // Maximum time the device is allowed to have a time diff from the api (miliseconds).
         const val maxAllowedApiTimeDifference: Long = 10 * 60 * 1000
+
+        const val hashSaltString = "Kfu6myLk2f79cKVA6fOs3xV67c1plcCh"
     }
 
     object Billing {

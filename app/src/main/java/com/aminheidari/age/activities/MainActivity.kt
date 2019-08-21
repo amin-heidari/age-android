@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity() {
             val purchasedInApps = rxBilling?.purchasedInApps
             if (purchasedInApps != null) {
                 purchasedInAppsDisposable = purchasedInApps.subscribe({ purchasedInApp ->
-                    if (lifecycle.currentState.isAtLeast(Lifecycle.State.STARTED)) {
+                    if (isAtLeastStarted) {
                         if (purchasedInApp.productId() == Constants.Billing.multipleAgesId) {
                             // We don't need further updates from this point on since we have a single in app purchase at the moment.
                             purchasedInAppsDisposable?.dispose()

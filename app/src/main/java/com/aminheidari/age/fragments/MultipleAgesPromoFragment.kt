@@ -9,6 +9,7 @@ import com.aminheidari.age.R
 import com.aminheidari.age.constants.Constants
 import com.aminheidari.age.utils.PreferencesUtil
 import com.aminheidari.age.utils.isAtLeastCreated
+import com.aminheidari.age.utils.popBackstack
 import com.aminheidari.age.utils.rxBilling
 import com.vanniktech.rxbilling.PurchasedInApp
 import com.vanniktech.rxbilling.RxBilling
@@ -119,10 +120,12 @@ class MultipleAgesPromoFragment : BaseFragment() {
 
         Otherwise, all good (once isPrcessing is set, it's set for good).
          */
+
+        isProcessing = false
     }
 
     private fun successWrapUp() {
-
+        popBackstack()
     }
 
     // endregion
@@ -177,6 +180,8 @@ class MultipleAgesPromoFragment : BaseFragment() {
     }
 
     private val restoreButtonOnClickListener = View.OnClickListener {
+        isProcessing = true
+
         var multipleAgesPurhcasedInApp: PurchasedInApp? = null
 
         val currentRxBilling = rxBilling

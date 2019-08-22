@@ -1,5 +1,6 @@
 package com.aminheidari.age.fragments
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -7,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.aminheidari.age.R
 import com.aminheidari.age.constants.Constants
+import com.aminheidari.age.dialogs.AlertDialogFragment
 import com.aminheidari.age.utils.PreferencesUtil
 import com.aminheidari.age.utils.isAtLeastCreated
 import com.aminheidari.age.utils.popBackstack
@@ -67,6 +69,17 @@ class MultipleAgesPromoFragment : BaseFragment() {
         restoreButton.setOnClickListener(restoreButtonOnClickListener)
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        when (requestCode) {
+            AlertDialogFragment.REQUEST_CODE -> {
+                popBackstack()
+            }
+            else -> Unit
+        }
+    }
+
     override fun handleBackPressed(listener: OnNavigateAwayListener): Boolean {
         // Don't allow going back if purchase in progress.
         if (isProcessing) { return true }
@@ -121,11 +134,19 @@ class MultipleAgesPromoFragment : BaseFragment() {
         Otherwise, all good (once isPrcessing is set, it's set for good).
          */
 
-        isProcessing = false
+        AlertDialogFragment.showNewInstance(
+            this,
+            AlertDialogFragment.Input.Informational(R.string.error, R.string.error_description, R.string.ok)
+        )
     }
 
     private fun successWrapUp() {
         popBackstack()
+
+        AlertDialogFragment.showNewInstance(
+            this,
+            AlertDialogFragment.Input.Informational(R.string.congrats, R.string.purchase_success, R.string.ok)
+        )
     }
 
     // endregion

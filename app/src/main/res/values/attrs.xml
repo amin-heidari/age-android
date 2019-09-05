@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="Gradient">
-        <attr name="startColor" format="color" />
-        <attr name="endColor" format="color"/>
-        <attr name="orientation" format="color">
-            <enum name="left" value="0"/>
-            <enum name="right" value="1"/>
-        </attr>
+    <declare-styleable name="RingView">
+        <attr name="strokeColor" format="color" />
+        <attr name="strokeWidth" format="dimension"/>
+        <attr name="segmentsCount" format="integer"/>
     </declare-styleable>
 </resources>

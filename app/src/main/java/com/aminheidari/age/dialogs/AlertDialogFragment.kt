@@ -138,11 +138,11 @@ class AlertDialogFragment : BaseDialogFragment() {
                 // If the back button needs to be blocked.
                 // https://stackoverflow.com/a/10171885
                 isCancelable = true
-                dialog.setCanceledOnTouchOutside(false)
+                dialog?.setCanceledOnTouchOutside(false)
             }
             is Input.Proceed -> {
                 isCancelable = false
-                dialog.setCanceledOnTouchOutside(false)
+                dialog?.setCanceledOnTouchOutside(false)
             }
         }
     }

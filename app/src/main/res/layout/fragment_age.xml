@@ -6,6 +6,17 @@
         android:layout_height="match_parent"
         tools:context="com.aminheidari.age.fragments.AgeFragment">
 
+    <com.mikhaellopez.gradientview.GradientView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:gv_direction="top_to_bottom"
+            app:gv_start="#f00"
+            app:gv_end="#0f0"/>
+
     <Button
             android:id="@+id/agesButton"
             android:layout_width="wrap_content"

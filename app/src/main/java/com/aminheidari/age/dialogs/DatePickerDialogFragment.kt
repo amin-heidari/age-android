@@ -94,7 +94,7 @@ class DatePickerDialogFragment : BaseDialogFragment() {
     override fun onStart() {
         super.onStart()
 
-        dialog.setCanceledOnTouchOutside(false)
+        dialog?.setCanceledOnTouchOutside(false)
     }
 
     // endregion

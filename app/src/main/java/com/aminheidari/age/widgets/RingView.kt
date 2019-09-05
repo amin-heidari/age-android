@@ -1,6 +1,8 @@
 package com.aminheidari.age.widgets
 
 import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
 import com.aminheidari.age.R
@@ -46,11 +48,32 @@ class RingView(context: Context, attrs: AttributeSet) : View(context, attrs) {
         }
     }
 
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        super.onSizeChanged(w, h, oldw, oldh)
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+    }
+
+    override fun onDraw(canvas: Canvas?) {
+        super.onDraw(canvas)
+
+        canvas?.let { c ->
+            strokePaint.color = strokeColor
+            strokePaint.strokeWidth = strokeWidth
+        }
+    }
+
     // endregion
 
     // ====================================================================================================
     // region Properties
     // ====================================================================================================
+
+    private val strokePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
+        style = Paint.Style.STROKE
+    }
 
     private var strokeColor: Int by Delegates.observable(0, { _, _, newValue ->
         invalidate()

@@ -14,8 +14,8 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:gv_direction="top_to_bottom"
-            app:gv_start="#f00"
-            app:gv_end="#0f0"/>
+            app:gv_start="@color/primary"
+            app:gv_end="@color/accent"/>
 
     <Button
             android:id="@+id/agesButton"

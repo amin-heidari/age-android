@@ -17,7 +17,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-    <com.aminheidari.age.widgets.RingView
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/gaugeView"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -26,11 +27,47 @@
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            app:layout_constraintDimensionRatio="h,1:1"
-            app:strokeColor="@android:color/white"
-            app:strokeWidth="10dp"
-            app:segmentsCount="6"
-            />
+            app:layout_constraintDimensionRatio="h,1:1">
+
+        <com.aminheidari.age.widgets.RingView
+                android:id="@+id/ringView1"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:strokeColor="#99FFFFFF"
+                app:strokeWidth="12dp"
+                app:segmentsCount="3" />
+
+        <com.aminheidari.age.widgets.RingView
+                android:id="@+id/ringView2"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toStartOf="@id/ringView1"
+                app:layout_constraintEnd_toEndOf="@id/ringView1"
+                app:layout_constraintTop_toTopOf="@id/ringView1"
+                app:layout_constraintBottom_toBottomOf="@id/ringView1"
+                android:layout_margin="18dp"
+                app:strokeColor="#CCFFFFFF"
+                app:strokeWidth="8dp"
+                app:segmentsCount="1" />
+
+        <com.aminheidari.age.widgets.RingView
+                android:id="@+id/ringView3"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toStartOf="@id/ringView2"
+                app:layout_constraintEnd_toEndOf="@id/ringView2"
+                app:layout_constraintTop_toTopOf="@id/ringView2"
+                app:layout_constraintBottom_toBottomOf="@id/ringView2"
+                android:layout_margin="14dp"
+                app:strokeColor="#FFFFFF"
+                app:strokeWidth="6dp"
+                app:segmentsCount="8" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
             android:id="@+id/agesButton"

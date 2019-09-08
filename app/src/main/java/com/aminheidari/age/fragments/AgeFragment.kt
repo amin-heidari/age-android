@@ -7,6 +7,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.RotateAnimation
 import com.aminheidari.age.R
 import com.aminheidari.age.calculator.AgeCalculator
 import com.aminheidari.age.constants.Constants
@@ -111,6 +113,9 @@ class AgeFragment : BaseFragment() {
                 // Possible error handling logic.
             }
         }
+
+        // GaugeView rotations.
+        startGaugeAnimations()
     }
 
     override fun onResume() {
@@ -126,6 +131,8 @@ class AgeFragment : BaseFragment() {
 
         isBillingForInAppSupportedDisposable?.dispose()
         queryInAppPurchasesDisposable?.dispose()
+
+        stopGaugeAnimations()
     }
 
     // endregion
@@ -154,6 +161,34 @@ class AgeFragment : BaseFragment() {
                 }, Constants.AgeCalculation.refreshInterval)
             }
         }
+    }
+
+    // https://stackoverflow.com/a/48108767
+    private fun startGaugeAnimations() {
+        if (!isVisible) {
+            ringView1.clearAnimation()
+            ringView3.clearAnimation()
+            return
+        }
+
+        ringView1.clearAnimation()
+        val largeRotationAnimation = RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f).apply {
+            duration = 80000
+            repeatCount = Animation.INFINITE
+        }
+        ringView1.startAnimation(largeRotationAnimation)
+
+        ringView3.clearAnimation()
+        val smallRotationAnimation = RotateAnimation(360f, 0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f).apply {
+            duration = 40000
+            repeatCount = Animation.INFINITE
+        }
+        ringView3.startAnimation(smallRotationAnimation)
+    }
+
+    private fun stopGaugeAnimations() {
+        ringView1.clearAnimation()
+        ringView3.clearAnimation()
     }
 
     // endregion

@@ -9,13 +9,28 @@
     <com.mikhaellopez.gradientview.GradientView
             android:layout_width="0dp"
             android:layout_height="0dp"
+            app:gv_direction="top_to_bottom"
+            app:gv_end="@color/accent"
+            app:gv_start="@color/primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <com.aminheidari.age.widgets.RingView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:gv_direction="top_to_bottom"
-            app:gv_start="@color/primary"
-            app:gv_end="@color/primary"/>
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:strokeColor="@android:color/white"
+            app:strokeWidth="10dp"
+            app:segmentsCount="6"
+            />
 
     <Button
             android:id="@+id/agesButton"

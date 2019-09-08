@@ -155,7 +155,9 @@ class AgeFragment : BaseFragment() {
     private fun refreshAge() {
         ageCalculator?.let { calculator ->
             if (isResumed) {
-                ageTextView.text = String.format("%10.8f", calculator.currentAge.value)
+                val currentAge = calculator.currentAge
+                ageFullTextView.text = String.format("%d", currentAge.full)
+                ageRationalTextView.text = String.format(".%s", currentAge.rationalDigits)
                 Handler().postDelayed({
                     refreshAge()
                 }, Constants.AgeCalculation.refreshInterval)

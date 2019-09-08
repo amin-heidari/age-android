@@ -69,6 +69,33 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="@id/gaugeView"
+            app:layout_constraintEnd_toEndOf="@id/gaugeView"
+            app:layout_constraintTop_toTopOf="@id/gaugeView"
+            app:layout_constraintBottom_toBottomOf="@id/gaugeView">
+
+        <TextView
+                android:id="@+id/ageFullTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:typeface="monospace"
+                android:text="38" />
+
+        <TextView
+                android:id="@+id/ageRationalTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:typeface="monospace"
+                android:text=".12345678"/>
+
+    </LinearLayout>
+
     <Button
             android:id="@+id/agesButton"
             android:layout_width="wrap_content"
@@ -87,6 +114,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:text="Current Age!"/>
+            android:text="Current Age!"
+            android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

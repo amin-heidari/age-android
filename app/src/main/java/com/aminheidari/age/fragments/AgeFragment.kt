@@ -174,14 +174,14 @@ class AgeFragment : BaseFragment() {
         }
 
         ringView1.clearAnimation()
-        val largeRotationAnimation = RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f).apply {
+        val largeRotationAnimation = RotateAnimation(360f, 0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f).apply {
             duration = 80000
             repeatCount = Animation.INFINITE
         }
         ringView1.startAnimation(largeRotationAnimation)
 
         ringView3.clearAnimation()
-        val smallRotationAnimation = RotateAnimation(360f, 0f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f).apply {
+        val smallRotationAnimation = RotateAnimation(0f, 360f, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f).apply {
             duration = 40000
             repeatCount = Animation.INFINITE
         }

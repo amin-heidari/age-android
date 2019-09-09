@@ -76,7 +76,8 @@
             app:layout_constraintStart_toStartOf="@id/gaugeView"
             app:layout_constraintEnd_toEndOf="@id/gaugeView"
             app:layout_constraintTop_toTopOf="@id/gaugeView"
-            app:layout_constraintBottom_toBottomOf="@id/gaugeView">
+            app:layout_constraintBottom_toBottomOf="@id/gaugeView"
+            android:gravity="bottom">
 
         <TextView
                 android:id="@+id/ageFullTextView"
@@ -84,14 +85,17 @@
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/white"
                 android:typeface="monospace"
+                android:textSize="54dp"
                 android:text="38" />
 
         <TextView
                 android:id="@+id/ageRationalTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:paddingBottom="20dp"
                 android:textColor="@android:color/white"
                 android:typeface="monospace"
+                android:textSize="24dp"
                 android:text=".12345678"/>
 
     </LinearLayout>

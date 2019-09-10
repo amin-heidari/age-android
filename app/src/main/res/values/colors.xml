@@ -4,4 +4,5 @@
     <color name="primaryDark">#004864</color>
     <color name="accent">#D81B60</color>
     <color name="text">#666666</color>
+    <color name="buttonRipple">#20000000</color>
 </resources>

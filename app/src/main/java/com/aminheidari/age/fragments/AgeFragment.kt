@@ -59,6 +59,7 @@ class AgeFragment : BaseFragment() {
         ageTextView.text = String.format("%s is: %d-%d-%d", birthday.name,  birthday.birthDate.year, birthday.birthDate.month, birthday.birthDate.day)
 
         agesButton.setOnClickListener(agesButtonOnClickListener)
+        listOfAgesButton.setOnCapturedPointerListener(agesButtonOnClickListener)
     }
 
     override fun onStart() {
@@ -68,9 +69,10 @@ class AgeFragment : BaseFragment() {
 
         // If the app is already purchased, then don't do anything.
         // Note that for a regular app we'll always set up store connections and utils. But here we have a single non-consumable IAP so making it simpler.
-        if (PreferencesUtil.multipleAgesPurchaseToken == null) {
+        if (PreferencesUtil.multipleAgesPurchaseToken != null) {
             // Update UI.
             agesButton.visibility = View.VISIBLE
+            listOfAgesButton.visibility = View.VISIBLE
         } else {
             // Otherwise, query the status of the in app purchase and proceed accordingly.
             val isBillingForInAppSupported = rxBilling?.isBillingForInAppSupported
@@ -93,6 +95,7 @@ class AgeFragment : BaseFragment() {
 
                                         // Update UI.
                                         agesButton.visibility = View.VISIBLE
+                                        listOfAgesButton.visibility = View.VISIBLE
                                     }
                                 }
                             }, {

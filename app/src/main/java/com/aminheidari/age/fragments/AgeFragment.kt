@@ -59,7 +59,7 @@ class AgeFragment : BaseFragment() {
         ageTextView.text = String.format("%s is: %d-%d-%d", birthday.name,  birthday.birthDate.year, birthday.birthDate.month, birthday.birthDate.day)
 
         agesButton.setOnClickListener(agesButtonOnClickListener)
-        listOfAgesButton.setOnCapturedPointerListener(agesButtonOnClickListener)
+        listOfAgesButton.setOnClickListener(agesButtonOnClickListener)
     }
 
     override fun onStart() {

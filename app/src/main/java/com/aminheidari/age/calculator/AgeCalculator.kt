@@ -4,12 +4,16 @@ import com.aminheidari.age.models.BirthDate
 import com.aminheidari.age.utils.Logger
 import java.math.BigDecimal
 import java.util.*
+import kotlin.math.round
 
 class AgeCalculator(private val birthDate: BirthDate) {
 
     data class Age(val full: Int, val rational: Double) {
         val value: Double
             get() = full.toDouble() + rational
+
+        val rationalDigits: String
+            get() = String.format("%d", round(rational * 100000000).toInt())
     }
 
     val currentAge: Age

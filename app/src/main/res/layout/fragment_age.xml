@@ -6,15 +6,151 @@
         android:layout_height="match_parent"
         tools:context="com.aminheidari.age.fragments.AgeFragment">
 
-    <Button
+    <com.mikhaellopez.gradientview.GradientView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:gv_direction="top_to_bottom"
+            app:gv_end="@color/accent"
+            app:gv_start="@color/primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="16dp"
+            android:text="Your Age"
+            android:textSize="17dp"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"/>
+
+    <ImageButton
             android:id="@+id/agesButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingLeft="32dp"
+            android:paddingTop="24dp"
+            android:paddingRight="24dp"
+            android:paddingBottom="32dp"
+            android:src="@drawable/menu"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:visibility="gone" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/gaugeView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            android:layout_margin="20dp"
-            android:text="Ages"
-            android:visibility="gone"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            app:layout_constraintDimensionRatio="h,1:1">
+
+        <com.aminheidari.age.widgets.RingView
+                android:id="@+id/ringView1"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:strokeColor="#99FFFFFF"
+                app:strokeWidth="12dp"
+                app:segmentsCount="3" />
+
+        <com.aminheidari.age.widgets.RingView
+                android:id="@+id/ringView2"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toStartOf="@id/ringView1"
+                app:layout_constraintEnd_toEndOf="@id/ringView1"
+                app:layout_constraintTop_toTopOf="@id/ringView1"
+                app:layout_constraintBottom_toBottomOf="@id/ringView1"
+                android:layout_margin="18dp"
+                app:strokeColor="#CCFFFFFF"
+                app:strokeWidth="8dp"
+                app:segmentsCount="1" />
+
+        <com.aminheidari.age.widgets.RingView
+                android:id="@+id/ringView3"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toStartOf="@id/ringView2"
+                app:layout_constraintEnd_toEndOf="@id/ringView2"
+                app:layout_constraintTop_toTopOf="@id/ringView2"
+                app:layout_constraintBottom_toBottomOf="@id/ringView2"
+                android:layout_margin="14dp"
+                app:strokeColor="#FFFFFF"
+                app:strokeWidth="6dp"
+                app:segmentsCount="8" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+            android:id="@+id/ageLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toStartOf="@id/gaugeView"
+            app:layout_constraintEnd_toEndOf="@id/gaugeView"
+            app:layout_constraintTop_toTopOf="@id/gaugeView"
+            app:layout_constraintBottom_toBottomOf="@id/gaugeView"
+            android:gravity="bottom">
+
+        <TextView
+                android:id="@+id/ageFullTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:typeface="monospace"
+                android:textSize="54dp"
+                android:text="38" />
+
+        <TextView
+                android:id="@+id/ageRationalTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@android:color/white"
+                android:typeface="monospace"
+                android:textSize="24dp"
+                android:text=".12345678"/>
+
+    </LinearLayout>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/gaugeView"
+            app:layout_constraintEnd_toEndOf="@id/gaugeView"
+            app:layout_constraintBottom_toTopOf="@id/ageLayout"
+            android:layout_marginBottom="16dp"
+            android:textColor="@android:color/white"
+            android:typeface="monospace"
+            android:textSize="22dp"
+            android:textStyle="bold"
+            android:text="YOU ARE"/>
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@id/gaugeView"
+            app:layout_constraintEnd_toEndOf="@id/gaugeView"
+            app:layout_constraintTop_toBottomOf="@id/ageLayout"
+            android:layout_marginTop="24dp"
+            android:textColor="@android:color/white"
+            android:typeface="monospace"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="YEARS OLD"/>
 
     <TextView
             android:id="@+id/ageTextView"
@@ -24,6 +160,28 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            android:text="Current Age!"/>
+            android:text="Current Age!"
+            android:visibility="gone"/>
+
+    <Button
+            android:id="@+id/listOfAgesButton"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="40dp"
+            android:paddingStart="60dp"
+            android:paddingEnd="60dp"
+            android:fontFamily="sans-serif"
+            android:text="List of Ages"
+            android:textFontWeight="600"
+            android:textSize="17dp"
+            android:elevation="0dp"
+            android:background="@drawable/bg_list_of_ages"
+            android:textAllCaps="false"
+            android:textColor="@color/accent"
+            android:visibility="gone" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

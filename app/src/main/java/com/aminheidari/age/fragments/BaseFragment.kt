@@ -36,7 +36,7 @@ abstract class BaseFragment: Fragment() {
     // region Life Cycle
     // ====================================================================================================
 
-    override fun onAttach(context: Context?) {
+    override fun onAttach(context: Context) {
         super.onAttach(context)
 
         Logger.v(this::class.java.canonicalName, String.format("%d -> onAttach.", hashCode()))

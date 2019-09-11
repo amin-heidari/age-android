@@ -106,25 +106,29 @@ class NewAgeFragment : BaseFragment() {
             is Scenario.NewDefault -> {
                 deleteButton.visibility = View.GONE
                 editingBirthDate = evaluateDefaultBirthDate()
+                titleTextView.text = "Enter your Age"
             }
             is Scenario.EditDefault -> {
                 deleteButton.visibility = View.GONE
                 val birthday = PreferencesUtil.defaultBirthday!!
                 editingBirthDate = birthday.birthDate
                 nameEditText.setText(birthday.name)
+                titleTextView.text = "Your Age"
             }
             is Scenario.NewEntity -> {
                 deleteButton.visibility = View.GONE
                 editingBirthDate = evaluateDefaultBirthDate()
+                titleTextView.text = "New Age"
             }
             is Scenario.EditEntity -> {
                 deleteButton.visibility = View.VISIBLE
                 editingBirthDate = currentScenario.birthdayEntity.birthday.birthDate
                 nameEditText.setText(currentScenario.birthdayEntity.name)
+                titleTextView.text = "Edit Age"
             }
         }
 
-        dateTextView.setOnClickListener(dateTextViewOnClickListener)
+        dateEditText.setOnClickListener(dateTextViewOnClickListener)
 
         nameEditText.addTextChangedListener(nameTextWatcher)
 
@@ -165,22 +169,22 @@ class NewAgeFragment : BaseFragment() {
         set(value) {
             _editingBirthDate = value
             if (value != null) {
-                dateTextView.text = String.format("%d - %d - %d", value.year, value.month, value.day)
+                dateEditText.setText(String.format("%d - %d - %d", value.year, value.month, value.day))
             } else {
-                dateTextView.text = null
+                dateEditText.text = null
             }
         }
 
     private var isProcessing: Boolean by Delegates.observable(false) { _, _, newValue ->
         if (newValue) {
             nameEditText.isEnabled = false
-            dateTextView.isEnabled = false
+            dateEditText.isEnabled = false
             proceedButton.isEnabled = false
             deleteButton.isEnabled = false
             progressBar.visibility = View.VISIBLE
         } else {
             nameEditText.isEnabled = true
-            dateTextView.isEnabled = true
+            dateEditText.isEnabled = true
             proceedButton.isEnabled = true
             deleteButton.isEnabled = true
             progressBar.visibility = View.GONE
@@ -198,7 +202,7 @@ class NewAgeFragment : BaseFragment() {
     }
 
     private fun updateProceedButton() {
-        proceedButton.isEnabled = nameEditText.text.isNotEmpty()
+        proceedButton.isEnabled = nameEditText.text.toString().isNotEmpty()
     }
 
     private fun finishWithResult(result: Result) {

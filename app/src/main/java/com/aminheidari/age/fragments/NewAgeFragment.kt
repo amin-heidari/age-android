@@ -106,21 +106,25 @@ class NewAgeFragment : BaseFragment() {
             is Scenario.NewDefault -> {
                 deleteButton.visibility = View.GONE
                 editingBirthDate = evaluateDefaultBirthDate()
+                titleTextView.text = "Enter your Age"
             }
             is Scenario.EditDefault -> {
                 deleteButton.visibility = View.GONE
                 val birthday = PreferencesUtil.defaultBirthday!!
                 editingBirthDate = birthday.birthDate
                 nameEditText.setText(birthday.name)
+                titleTextView.text = "Your Age"
             }
             is Scenario.NewEntity -> {
                 deleteButton.visibility = View.GONE
                 editingBirthDate = evaluateDefaultBirthDate()
+                titleTextView.text = "New Age"
             }
             is Scenario.EditEntity -> {
                 deleteButton.visibility = View.VISIBLE
                 editingBirthDate = currentScenario.birthdayEntity.birthday.birthDate
                 nameEditText.setText(currentScenario.birthdayEntity.name)
+                titleTextView.text = "Edit Age"
             }
         }
 

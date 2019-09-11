@@ -124,7 +124,7 @@ class NewAgeFragment : BaseFragment() {
             }
         }
 
-        dateTextView.setOnClickListener(dateTextViewOnClickListener)
+        dateEditText.setOnClickListener(dateTextViewOnClickListener)
 
         nameEditText.addTextChangedListener(nameTextWatcher)
 
@@ -165,22 +165,22 @@ class NewAgeFragment : BaseFragment() {
         set(value) {
             _editingBirthDate = value
             if (value != null) {
-                dateTextView.text = String.format("%d - %d - %d", value.year, value.month, value.day)
+                dateEditText.setText(String.format("%d - %d - %d", value.year, value.month, value.day))
             } else {
-                dateTextView.text = null
+                dateEditText.text = null
             }
         }
 
     private var isProcessing: Boolean by Delegates.observable(false) { _, _, newValue ->
         if (newValue) {
             nameEditText.isEnabled = false
-            dateTextView.isEnabled = false
+            dateEditText.isEnabled = false
             proceedButton.isEnabled = false
             deleteButton.isEnabled = false
             progressBar.visibility = View.VISIBLE
         } else {
             nameEditText.isEnabled = true
-            dateTextView.isEnabled = true
+            dateEditText.isEnabled = true
             proceedButton.isEnabled = true
             deleteButton.isEnabled = true
             progressBar.visibility = View.GONE
@@ -198,7 +198,7 @@ class NewAgeFragment : BaseFragment() {
     }
 
     private fun updateProceedButton() {
-        proceedButton.isEnabled = nameEditText.text.isNotEmpty()
+        proceedButton.isEnabled = nameEditText.text.toString().isNotEmpty()
     }
 
     private fun finishWithResult(result: Result) {

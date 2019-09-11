@@ -5,4 +5,5 @@
     <color name="accent">#D81B60</color>
     <color name="text">#666666</color>
     <color name="buttonRipple">#20000000</color>
+    <color name="greyText">#686361</color>
 </resources>

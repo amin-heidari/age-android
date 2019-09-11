@@ -3,8 +3,7 @@
     <color name="primary">#00DAFE</color>
     <color name="primaryDark">#00BAD9</color>
     <color name="accent">#FF4CAC</color>
-    <color name="darkText">#666666</color>
+    <color name="appText">#666666</color>
     <color name="buttonRipple">#20000000</color>
-    <color name="greyText">#686361</color>
     <color name="buttonDisabled">#696969</color>
 </resources>

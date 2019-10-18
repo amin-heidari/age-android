@@ -13,7 +13,7 @@ class AgeCalculator(private val birthDate: BirthDate) {
             get() = full.toDouble() + rational
 
         val rationalDigits: String
-            get() = String.format("%d", round(rational * 100000000).toInt())
+            get() = String.format("%08d", round(rational * 100000000).toInt())
     }
 
     val currentAge: Age

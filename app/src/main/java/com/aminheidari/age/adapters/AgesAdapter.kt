@@ -54,6 +54,8 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
         private val gradientView: GradientView = view.findViewById(R.id.gradientView)
         private val nameTextView: TextView = view.findViewById(R.id.nameTextView)
         private val birthdayTextView: TextView = view.findViewById(R.id.birthdayTextView)
+        private val ageFullTextView: TextView = view.findViewById(R.id.ageFullTextView)
+        private val ageRationalTextView: TextView = view.findViewById(R.id.ageRationalTextView)
         private val defaultTextView: TextView = view.findViewById(R.id.defaultTextView)
 
         private var ageCalculator: AgeCalculator? = null
@@ -116,7 +118,10 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
         private fun refreshAge() {
             ageCalculator?.let { calculator ->
                 if (isRefreshingAge && isRecyclerViewVisible) {
-                    birthdayTextView.text = String.format("%.8f", calculator.currentAge.value)
+                    val currentAge = calculator.currentAge
+                    ageFullTextView.text = String.format("%d", currentAge.full)
+                    ageRationalTextView.text = String.format(".%s", currentAge.rationalDigits)
+
                     Handler().postDelayed({
                         refreshAge()
                     }, Constants.AgeCalculation.refreshInterval)

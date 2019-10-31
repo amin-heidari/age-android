@@ -1,10 +1,12 @@
 package com.aminheidari.age.adapters
 
+import android.graphics.Color
 import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.aminheidari.age.R
@@ -12,10 +14,12 @@ import com.aminheidari.age.calculator.AgeCalculator
 import com.aminheidari.age.constants.Constants
 import com.aminheidari.age.database.entities.BirthdayEntity
 import com.aminheidari.age.models.Birthday
+import com.aminheidari.age.models.RemoteConfig
 import com.aminheidari.age.utils.ItemBinder
 import com.aminheidari.age.utils.Logger
 import com.aminheidari.age.utils.OnItemSelectedListener
 import com.aminheidari.age.utils.birthday
+import com.mikhaellopez.gradientview.GradientView
 import kotlin.properties.Delegates
 
 class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -31,8 +35,8 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
     }
 
     sealed class Item {
-        data class MyAge(val birthday: Birthday): Item()
-        data class Age(val birthdayEntity: BirthdayEntity): Item()
+        data class MyAge(val birthday: Birthday, val agesCard: RemoteConfig.AgesCard): Item()
+        data class Age(val birthdayEntity: BirthdayEntity, val agesCard: RemoteConfig.AgesCard): Item()
         object AddAge: Item()
 
         val viewType: Int
@@ -46,8 +50,12 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
     }
 
     inner class AgeViewHolder(view: View): RecyclerView.ViewHolder(view), View.OnClickListener, ItemBinder<Item>, AgeRefresher {
+        private val cardView: CardView = view.findViewById(R.id.cardView)
+        private val gradientView: GradientView = view.findViewById(R.id.gradientView)
         private val nameTextView: TextView = view.findViewById(R.id.nameTextView)
         private val birthdayTextView: TextView = view.findViewById(R.id.birthdayTextView)
+        private val ageFullTextView: TextView = view.findViewById(R.id.ageFullTextView)
+        private val ageRationalTextView: TextView = view.findViewById(R.id.ageRationalTextView)
         private val defaultTextView: TextView = view.findViewById(R.id.defaultTextView)
 
         private var ageCalculator: AgeCalculator? = null
@@ -66,6 +74,11 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
                     defaultTextView.visibility = View.VISIBLE
 
                     ageCalculator = AgeCalculator(birthday.birthDate)
+
+                    gradientView.start = Color.parseColor(item.agesCard.startColor)
+                    gradientView.end = Color.parseColor(item.agesCard.endColor)
+
+                    cardView.setOnClickListener(this)
                 }
                 is Item.Age -> {
                     val birthday = item.birthdayEntity.birthday
@@ -75,6 +88,11 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
                     defaultTextView.visibility = View.GONE
 
                     ageCalculator = AgeCalculator(birthday.birthDate)
+
+                    gradientView.start = Color.parseColor(item.agesCard.startColor)
+                    gradientView.end = Color.parseColor(item.agesCard.endColor)
+
+                    cardView.setOnClickListener(this)
                 }
                 else -> {
                     throw IllegalStateException("Not supported!")
@@ -100,7 +118,10 @@ class AgesAdapter(val onItemSelectedListener: OnItemSelectedListener<Item>): Rec
         private fun refreshAge() {
             ageCalculator?.let { calculator ->
                 if (isRefreshingAge && isRecyclerViewVisible) {
-                    birthdayTextView.text = String.format("%.8f", calculator.currentAge.value)
+                    val currentAge = calculator.currentAge
+                    ageFullTextView.text = String.format("%d", currentAge.full)
+                    ageRationalTextView.text = String.format(".%s", currentAge.rationalDigits)
+
                     Handler().postDelayed({
                         refreshAge()
                     }, Constants.AgeCalculation.refreshInterval)

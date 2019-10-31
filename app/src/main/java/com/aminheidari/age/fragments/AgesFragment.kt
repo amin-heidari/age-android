@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.aminheidari.age.R
 import com.aminheidari.age.adapters.AgesAdapter
+import com.aminheidari.age.config.RemoteConfigManager
 import com.aminheidari.age.database.DatabaseManager
 import com.aminheidari.age.database.entities.BirthdayEntity
 import com.aminheidari.age.models.Birthday
@@ -138,10 +139,14 @@ class AgesFragment : BaseFragment(), OnItemSelectedListener<AgesAdapter.Item> {
     }
 
     private fun evaluateAdapterItems(): List<AgesAdapter.Item> {
-        val list = mutableListOf<AgesAdapter.Item>(AgesAdapter.Item.MyAge(PreferencesUtil.defaultBirthday!!))
+        val list = mutableListOf<AgesAdapter.Item>(AgesAdapter.Item.MyAge(PreferencesUtil.defaultBirthday!!, RemoteConfigManager.remoteConfig.agesCards.first()))
+
+        val agesCards = RemoteConfigManager.remoteConfig.agesCards
 
         DatabaseManager.birthdays.value?.let { birthdays ->
-            list.addAll(birthdays.map { AgesAdapter.Item.Age(it) })
+            list.addAll(birthdays.mapIndexed { index, birthdayEntity ->
+                AgesAdapter.Item.Age(birthdayEntity, agesCards[(index + 1).rem(agesCards.size)])
+            })
         }
 
         list.add(AgesAdapter.Item.AddAge)

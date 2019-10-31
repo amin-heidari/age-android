@@ -47,7 +47,7 @@ class DatePickerDialogFragment : BaseDialogFragment() {
 
             fragment.setTargetFragment(targetFragment, REQUEST_CODE)
 
-            targetFragment.activity?.let { fragment.show(it.supportFragmentManager, AlertDialogFragment::class.java.canonicalName) }
+            targetFragment.activity?.let { fragment.show(it.supportFragmentManager, DatePickerDialogFragment::class.java.canonicalName) }
         }
 
     }

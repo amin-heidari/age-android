@@ -47,12 +47,12 @@ class UpgradeFragment : BaseFragment() {
         when (RemoteConfigManager.remoteConfig.version.compare(BuildConfig.VERSION_NAME)) {
             RemoteConfig.Version.CompareResult.ForcedUpgrade -> {
                 upgradeTitleTextView.text = "Please upgrade to latest version."
-                upgradeDescriptionTextView.text = "You need to upgrade to the latest version of this application to enjoy all the super coolness of it."
+                upgradeDescriptionTextView.text = "You need to upgrade to the latest version of the application in order to continue using the app."
                 skipButton.visibility = View.GONE
             }
             RemoteConfig.Version.CompareResult.OptionalUpgrade -> {
                 upgradeTitleTextView.text = "There's a new version available :)"
-                upgradeDescriptionTextView.text = "We recommend you upgrade to the latest version of this application to enjoy all the super coolness of it."
+                upgradeDescriptionTextView.text = "There’s a newer, cooler version of the application available on the store."
                 skipButton.visibility = View.VISIBLE
             }
             else -> {

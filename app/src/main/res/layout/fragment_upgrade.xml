@@ -9,36 +9,81 @@
     <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginStart="40dp"
             android:layout_marginEnd="40dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.36">
 
         <TextView
                 android:id="@+id/upgradeTitleTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"/>
+                android:gravity="center_horizontal"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="20dp"
+                android:textColor="@color/appText"
+                android:text="Please upgrade to latest version." />
+
+        <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="30dp"
+                android:layout_marginBottom="30dp"
+                android:src="@drawable/ic_app_upgrade" />
 
         <TextView
                 android:id="@+id/upgradeDescriptionTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_horizontal"/>
+                android:gravity="center_horizontal"
+                android:fontFamily="san"
+                android:textSize="17dp"
+                android:textColor="@color/appText"
+                android:text="You need to upgrade to the latest version of the application in order to continue using the app." />
+
+    </LinearLayout>
+
+    <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginStart="40dp"
+            android:layout_marginEnd="40dp"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
 
         <Button android:id="@+id/upgradeButton"
+                style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Upgrade"/>
+                android:textColor="@android:color/white"
+                android:paddingStart="40dp"
+                android:paddingEnd="40dp"
+                android:background="@drawable/bg_btn_cta_primary"
+                android:textAllCaps="false"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="17dp"
+                android:text="Upgrade App"/>
 
         <Button android:id="@+id/skipButton"
+                style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
+                android:layout_marginTop="10dp"
+                android:textAllCaps="false"
+                android:textColor="@color/appText"
+                android:background="@android:color/transparent"
+                android:fontFamily="sans-serif-medium"
+                android:textSize="17dp"
                 android:text="Skip"/>
 
     </LinearLayout>

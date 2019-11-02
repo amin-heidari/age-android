@@ -82,7 +82,6 @@ class LoadingFragment : BaseFragment() {
         progressBar.visibility = View.VISIBLE
         errorLayout.visibility = View.GONE
 
-        /*
         configCall = RemoteConfigManager.fetchConfig { result ->
             progressBar.visibility = View.GONE
 
@@ -92,6 +91,7 @@ class LoadingFragment : BaseFragment() {
 
                     when (result.exception) {
                         is AppException.Connection -> {
+                            errorImageView.setImageResource(R.drawable.ic_no_internet)
                             errorTitleTextView.text = "No Internet!"
                             errorDescriptionTextView.text = "It looks like you're not connected to the internet. Please connect and try again!"
                             retryButton.visibility = View.VISIBLE
@@ -99,8 +99,9 @@ class LoadingFragment : BaseFragment() {
                             PreferencesUtil.appWidgetOverride = AppWidgetOverride.OpenApp
                         }
                         is AppException.CertificateExpired -> {
+                            errorImageView.setImageResource(R.drawable.ic_sad_face)
                             errorTitleTextView.text = "Please upgrade!"
-                            errorDescriptionTextView.text = "Please upgrade the application from the app store!"
+                            errorDescriptionTextView.text = "Please upgrade the application to the latest version in order to continue."
                             retryButton.visibility = View.GONE
 
                             // A bit of a tricky case, but this would suffice for the widget.
@@ -108,8 +109,9 @@ class LoadingFragment : BaseFragment() {
                             PreferencesUtil.appWidgetOverride = AppWidgetOverride.OpenApp
                         }
                         else -> {
+                            errorImageView.setImageResource(R.drawable.ic_sad_face)
                             errorTitleTextView.text = "Error!"
-                            errorDescriptionTextView.text = "An error occured, please try again!"
+                            errorDescriptionTextView.text = "An unknown error occurred. Please try again later!"
                             retryButton.visibility = View.VISIBLE
 
                             PreferencesUtil.appWidgetOverride = AppWidgetOverride.OpenApp
@@ -151,7 +153,6 @@ class LoadingFragment : BaseFragment() {
                 }
             }
         }
-         */
     }
 
     private fun proceedToTheApp() {

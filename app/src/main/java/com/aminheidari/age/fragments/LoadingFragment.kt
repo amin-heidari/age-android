@@ -82,6 +82,7 @@ class LoadingFragment : BaseFragment() {
         progressBar.visibility = View.VISIBLE
         errorLayout.visibility = View.GONE
 
+        /*
         configCall = RemoteConfigManager.fetchConfig { result ->
             progressBar.visibility = View.GONE
 
@@ -150,6 +151,7 @@ class LoadingFragment : BaseFragment() {
                 }
             }
         }
+         */
     }
 
     private fun proceedToTheApp() {

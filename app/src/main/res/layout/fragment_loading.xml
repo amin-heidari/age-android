@@ -6,6 +6,17 @@
         android:layout_height="match_parent"
         tools:context="com.aminheidari.age.fragments.LoadingFragment">
 
+    <com.mikhaellopez.gradientview.GradientView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:gv_direction="top_to_bottom"
+            app:gv_end="@color/accent"
+            app:gv_start="@color/primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
@@ -13,7 +24,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:indeterminateTint="@android:color/white"/>
 
     <LinearLayout
             android:id="@+id/errorLayout"

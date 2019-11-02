@@ -2,7 +2,6 @@ package com.aminheidari.age.fragments
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,8 +19,7 @@ import kotlinx.android.synthetic.main.fragment_multiple_ages_promo.*
 import kotlin.properties.Delegates
 
 /**
- * A simple [Fragment] subclass.
- *
+ * MultipleAgesPromoFragment.
  */
 class MultipleAgesPromoFragment : BaseFragment() {
 
@@ -108,10 +106,10 @@ class MultipleAgesPromoFragment : BaseFragment() {
     private var isProcessing: Boolean by Delegates.observable(false, { _, _, newValue ->
         if (newValue) {
             progressBar.visibility = View.VISIBLE
-            contentLayout.visibility = View.GONE
+            actionsLayout.visibility = View.GONE
         } else {
             progressBar.visibility = View.GONE
-            contentLayout.visibility = View.VISIBLE
+            actionsLayout.visibility = View.VISIBLE
         }
     })
 

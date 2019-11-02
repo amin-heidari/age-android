@@ -121,7 +121,7 @@ class PreferencesUtil {
             }
 
         var multipleAgesPurchaseToken: String?
-            get() = "1234"//getProtectedString(Companion.Key.MultipleAgesPurchaseToken, Companion.Key.CachedMonitorRate, null)
+            get() = getProtectedString(Companion.Key.MultipleAgesPurchaseToken, Companion.Key.CachedMonitorRate, null)
             set(value) {
                 setProtectedString(Companion.Key.MultipleAgesPurchaseToken, Companion.Key.CachedMonitorRate, value)
             }

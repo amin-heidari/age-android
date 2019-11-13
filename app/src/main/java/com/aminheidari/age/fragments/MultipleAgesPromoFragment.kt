@@ -65,6 +65,33 @@ class MultipleAgesPromoFragment : BaseFragment() {
 
         buyButton.setOnClickListener(buyButtonOnClickListener)
         restoreButton.setOnClickListener(restoreButtonOnClickListener)
+
+        // Load the details and pricing for the in app purchase.
+        val currentRxBilling = rxBilling
+        if (currentRxBilling != null) {
+            queryInAppPurchasesDisposable = currentRxBilling.queryInAppPurchases(Constants.Billing.multipleAgesId).subscribe({ inventoryInApp ->
+                // Individual items.
+                if (!isDetached) {
+                    // Check if it's our desired in app purchase.
+                    if (inventoryInApp.sku() == Constants.Billing.multipleAgesId) {
+                        // Update the price label on the UI.
+                        buyButton.text = "Buy " + inventoryInApp.price()
+
+                        // We don't need further updates from this point on since we have a single in app purchase at the moment.
+                        queryInAppPurchasesDisposable?.dispose()
+                    }
+                }
+            }, {
+                // Error.
+                presentError()
+            }, {
+                // Completed.
+                // Debugging shows that it's disposed at this point. But it doesn't hurt.
+                queryInAppPurchasesDisposable?.dispose()
+            })
+        } else {
+            // Possible error handing logic.
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

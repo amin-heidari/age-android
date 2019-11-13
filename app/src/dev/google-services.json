@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "988369106885",
+    "firebase_url": "https://aminheidari-age-dev.firebaseio.com",
+    "project_id": "aminheidari-age-dev",
+    "storage_bucket": "aminheidari-age-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:988369106885:android:41bcf058beae3634d53dac",
+        "android_client_info": {
+          "package_name": "io.barsam.age.dev"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "988369106885-hmvgb8lk7mgh7bnsga799emrji7l515p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDf2uks5diuS0pcJi_lVeitr6sZwKETiIY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "988369106885-hmvgb8lk7mgh7bnsga799emrji7l515p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

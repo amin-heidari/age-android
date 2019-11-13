@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "227623943343",
+    "firebase_url": "https://aminheidari-age.firebaseio.com",
+    "project_id": "aminheidari-age",
+    "storage_bucket": "aminheidari-age.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:227623943343:android:b1233b9cd5825a619c685a",
+        "android_client_info": {
+          "package_name": "io.barsam.age"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "227623943343-usbe9khqoj5n8lg3nvuklofg3gmu8vg5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBWY1n4Wfd7xyHDybtizaigMv1bbOogFc0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "227623943343-usbe9khqoj5n8lg3nvuklofg3gmu8vg5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

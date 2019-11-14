@@ -55,7 +55,7 @@
                 android:layout_marginBottom="80dp"
                 android:text="Track the ages of as many of your family and friends in real-time."
                 android:textColor="@android:color/white"
-                android:textSize="14dp" />
+                android:textSize="17dp" />
         
     </LinearLayout>
 

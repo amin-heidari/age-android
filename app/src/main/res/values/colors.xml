@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#00DAFE</color>
-    <color name="primaryDark">#00BAD9</color>
-    <color name="accent">#FF4CAC</color>
+    <color name="primary">#FFBE49</color>
+    <color name="primaryDark">#DDA237</color>
+    <color name="accent">#F1007F</color>
     <color name="appText">#666666</color>
     <color name="buttonRipple">#20000000</color>
     <color name="buttonDisabled">#696969</color>

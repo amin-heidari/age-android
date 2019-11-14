@@ -16,8 +16,8 @@
             app:layout_constraintTop_toTopOf="@id/headerLayout"
             android:layout_marginBottom="30dp"
             app:gv_direction="left_to_right"
-            app:gv_start="#f1007e"
-            app:gv_end="#febd49" />
+            app:gv_start="@color/accent"
+            app:gv_end="@color/primary" />
 
     <LinearLayout
             android:id="@+id/headerLayout"
